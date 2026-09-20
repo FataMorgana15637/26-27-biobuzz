@@ -56,4 +56,15 @@ public class DriveSubsystem extends Subsystem {
         DrivePowers powers = ManualDrive.fieldCentric(forward, lateral, turn, Math.toRadians(getHeading()));
         follower.manual(powers);
     }
+
+    public HivePose getHivePose(){
+        if (getPose().y() <= 72 ) return FataMain.getAllianceColor() == AllianceColour.RED ?
+                HivePose.FRONT_RED : HivePose.BACK_BLUE;
+
+        if (getPose().y() > 72 ) return FataMain.getAllianceColor() == AllianceColour.RED ?
+                HivePose.BACK_RED : HivePose.FRONT_BLUE;
+
+        return null;
+    }
+
 }
