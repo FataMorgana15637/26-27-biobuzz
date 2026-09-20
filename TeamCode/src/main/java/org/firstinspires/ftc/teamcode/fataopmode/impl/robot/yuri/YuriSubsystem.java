@@ -1,18 +1,17 @@
 package org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri;
 
-import android.util.Range;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.pedropathing.math.Pose;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
-import org.firstinspires.ftc.teamcode.fataopmode.FataMain;
 import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.Subsystem;
 import utility.actionBase.Action;
-import utility.actionBase.actions.WaitUntilAction;
 
-import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriConstents.hoodDebug;
+import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.DriveSubsystem.drive;
 import static utility.actionBase.actions.Actions.simply;
 import static utility.actionBase.actions.Actions.waitUntil;
+import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.turret.TurretSubsystem.turret;
+import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriConstents.*;
 
 public class YuriSubsystem extends Subsystem {
     private MotorEx  yuriMotor;
@@ -57,17 +56,17 @@ public class YuriSubsystem extends Subsystem {
     private Action bang(double target){
         return simply(() -> {
         if (yuriMotor.getCurrentPosition() < target) {
-            yuriMotor.set(YuriConstents.maxBangConstents);
-        } else yuriMotor.set(-YuriConstents.maxBangConstents);
+            yuriMotor.set(maxBangConstents);
+        } else yuriMotor.set(-maxBangConstents);
         });
     }
 
     private Action pf(double target){
         return simply(() -> {
-        double error = Math.abs(yuriMotor.getVelocity() - target);
-        yuriMotor.set(YuriConstents.f * yuriMotor.getVelocity() *
+        double error = Math.abs(yuriMotor.getCurrentPosition() - target);
+        yuriMotor.set(f * yuriMotor.getVelocity() *
                 (yuriMotor.getCurrentPosition() < target ? 1 : -1)
-                + YuriConstents.p * error);
+                + p * error);
         });
     }
 
@@ -81,7 +80,7 @@ public class YuriSubsystem extends Subsystem {
         double theta = drive().getHeading();
         double x = drive().getX() - shooterOffset * Math.sin(theta);
         double y = drive().getY() + shooterOffset * Math.cos(theta);
-        return new Pose(x, y, drive().getHeading()); // fix heading TODO
+        return new Pose(x, y, turret().getTurretAngle());
     }
 
 
