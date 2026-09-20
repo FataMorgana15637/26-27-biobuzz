@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -10,6 +12,8 @@ import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 import com.seattlesolvers.solverslib.hardware.motors.CRServo;
+import com.seattlesolvers.solverslib.hardware.servos.ServoExGroup;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.fataopmode.FataMain;
 import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.decoy.DecoyDigitalChannel;
@@ -49,13 +53,24 @@ public interface hardware {
         }
         return servoEx;
     }
+    default ServoEx getServo(String name, double min, double max) {
+        getServo(name, isHardwareEnabled(), min, max);
+    }
 
-    default ServoEx getServo(String name, boolean enabled, double min, double max){
+    default ServoEx getServo(String name, boolean enabled, double min, double max) {
         ServoEx servoEx = new ServoEx(FataMain.getCurrentOpMode().hardwareMap, name, min, max);
-        if (!enabled){
+        if (!enabled) {
             servoEx.disable();
         }
         return servoEx;
+    }
+
+    default ServoExGroup getServoGroup(@NonNull ServoEx leader, ServoEx... followers){
+        return getServoGroup(isHardwareEnabled(), leader, followers);
+    }
+
+    default ServoExGroup getServoGroup( boolean enabled, @NonNull ServoEx leader, ServoEx... followers) {
+        return new ServoExGroup(leader, followers);
     }
 
     default CRServo getCRServo(String name) {

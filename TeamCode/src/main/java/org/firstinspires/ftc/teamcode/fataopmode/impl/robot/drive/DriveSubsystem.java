@@ -5,6 +5,7 @@ import com.pedropathing.follower.ManualDrive;
 import com.pedropathing.drivetrain.DrivePowers;
 import com.pedropathing.math.Pose;
 import org.firstinspires.ftc.teamcode.fataopmode.FataMain;
+import org.firstinspires.ftc.teamcode.fataopmode.api.opmode.AllianceColour;
 import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.Subsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -52,16 +53,24 @@ public class DriveSubsystem extends Subsystem {
         return follower.pose();
     }
 
+    public double getX(){
+        return follower.pose().x();
+    }
+
+    public double getY(){
+        return follower.pose().y();
+    }
+
     public void TeleOpDrive(double forward,double lateral,double turn) {
         DrivePowers powers = ManualDrive.fieldCentric(forward, lateral, turn, Math.toRadians(getHeading()));
         follower.manual(powers);
     }
 
     public HivePose getHivePose(){
-        if (getPose().y() <= 72 ) return FataMain.getAllianceColor() == AllianceColour.RED ?
+        if (getPose().y() <= 72 ) return FataMain.getAllianceColour() == AllianceColour.RED ?
                 HivePose.FRONT_RED : HivePose.BACK_BLUE;
 
-        if (getPose().y() > 72 ) return FataMain.getAllianceColor() == AllianceColour.RED ?
+        if (getPose().y() > 72 ) return FataMain.getAllianceColour() == AllianceColour.RED ?
                 HivePose.BACK_RED : HivePose.FRONT_BLUE;
 
         return null;

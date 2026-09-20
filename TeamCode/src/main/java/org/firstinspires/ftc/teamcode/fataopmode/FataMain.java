@@ -35,7 +35,7 @@ public class FataMain {
         return currentOpMode.gamepad2;
     }
 
-    public static AllianceColour getAllianceColor() {
+    public static AllianceColour getAllianceColour() {
         return allianceColour;
     }
 
