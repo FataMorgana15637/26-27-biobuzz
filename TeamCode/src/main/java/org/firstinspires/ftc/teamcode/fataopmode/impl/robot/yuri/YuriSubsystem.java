@@ -77,5 +77,12 @@ public class YuriSubsystem extends Subsystem {
                 .then(pf(ofeksMom));
     }
 
+    private Pose getShooterPose(){
+        double theta = drive().getHeading();
+        double x = drive().getX() - shooterOffset * Math.sin(theta);
+        double y = drive().getY() + shooterOffset * Math.cos(theta);
+        return new Pose(x, y, drive().getHeading()); // fix heading TODO
+    }
+
 
 }
