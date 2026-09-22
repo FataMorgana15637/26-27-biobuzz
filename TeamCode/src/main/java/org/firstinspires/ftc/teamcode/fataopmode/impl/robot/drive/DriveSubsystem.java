@@ -19,6 +19,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public static Follower follower;
+    private Pose currentPose;
 
     @Override
     public void hardwareInit() {
@@ -37,6 +38,7 @@ public class DriveSubsystem extends Subsystem {
     @Override
     public void loop() {
         follower.update();
+        currentPose = follower.pose();
 
     }
 
@@ -50,15 +52,15 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public Pose getPose(){
-        return follower.pose();
+        return currentPose;
     }
 
-    public double getX(){
-        return follower.pose().x();
+    public double x(){
+        return currentPose.x();
     }
 
-    public double getY(){
-        return follower.pose().y();
+    public double y(){
+        return currentPose.y();
     }
 
     public void TeleOpDrive(double forward,double lateral,double turn) {
@@ -66,12 +68,12 @@ public class DriveSubsystem extends Subsystem {
         follower.manual(powers);
     }
 
-    public HivePose getHivePose(){
-        if (getPose().y() <= 72 ) return FataMain.getAllianceColour() == AllianceColour.RED ?
-                HivePose.FRONT_RED : HivePose.BACK_BLUE;
+    public Hive getHive(){
+        if (y() <= 72 ) return FataMain.getAllianceColour() == AllianceColour.RED ?
+                Hive.FRONT_RED : Hive.BACK_BLUE;
 
-        if (getPose().y() > 72 ) return FataMain.getAllianceColour() == AllianceColour.RED ?
-                HivePose.BACK_RED : HivePose.FRONT_BLUE;
+        if (y() > 72 ) return FataMain.getAllianceColour() == AllianceColour.RED ?
+                Hive.BACK_RED : Hive.FRONT_BLUE;
 
         return null;
     }
