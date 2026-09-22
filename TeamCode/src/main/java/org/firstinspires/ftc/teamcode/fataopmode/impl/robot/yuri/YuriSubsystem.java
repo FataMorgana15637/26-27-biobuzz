@@ -5,6 +5,8 @@ import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.Subsystem;
+import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.Hive;
+
 import utility.actionBase.Action;
 
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.DriveSubsystem.drive;
@@ -78,10 +80,18 @@ public class YuriSubsystem extends Subsystem {
 
     private Pose getShooterPose(){
         double theta = drive().getHeading();
-        double x = drive().getX() - shooterOffset * Math.sin(theta);
-        double y = drive().getY() + shooterOffset * Math.cos(theta);
+        double x = drive().x() - shooterOffset * Math.sin(theta);
+        double y = drive().y() + shooterOffset * Math.cos(theta);
         return new Pose(x, y, turret().getTurretAngle());
     }
+
+    private double getHiveDist(){
+        Hive hive = drive().getHive();
+        Pose hivePose = hive.getTarget(drive().x());
+        Pose shooterPose = getShooterPose();
+        return Math.sqrt(Math.pow(hivePose.x() - shooterPose.x(), 2) + Math.pow(hivePose.y() - shooterPose.x(), 2));
+    }
+
 
 
 }
