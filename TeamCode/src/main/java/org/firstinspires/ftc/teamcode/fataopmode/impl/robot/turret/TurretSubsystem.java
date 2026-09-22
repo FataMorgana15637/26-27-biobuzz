@@ -8,6 +8,7 @@ import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 import com.seattlesolvers.solverslib.hardware.servos.ServoExGroup;
+import com.seattlesolvers.solverslib.util.InterpLUT;
 
 import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.Subsystem;
 import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.HivePose;
@@ -65,11 +66,13 @@ public class TurretSubsystem extends Subsystem {
                  Math.atan2(
                          target.y() - drive().getY(),
                          target.x() - drive().getX()
-                 )
+                 ) - Math.toRadians(drive().getHeading())
          );
 
-        if (angle < 0)
-            angle += 360;
+         if(angle > 180) angle -= 360;
+         if (angle < 180) angle += 360;
+
+         angle = (angle + 180) % 360 -180;
 
         return angle;
     }
@@ -86,7 +89,6 @@ public class TurretSubsystem extends Subsystem {
                     turret().getDegreesTo(
                             drive().getHivePose()
                                     .getTarget(drive().getX())
-
                     )
             );
         });
