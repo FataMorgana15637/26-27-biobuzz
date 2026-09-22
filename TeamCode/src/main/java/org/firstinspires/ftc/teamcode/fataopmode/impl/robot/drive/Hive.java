@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive;
 
 import com.pedropathing.math.Pose;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-
-public enum HivePose {
+public enum Hive {
 //    front is towards the garden pf each alliance
     FRONT_RED(0,0,0,0,0),
     FRONT_BLUE(0,0,0,0,0),
@@ -20,7 +16,7 @@ public enum HivePose {
 
     private final double y;
 
-    HivePose(double maxLeft, double maxRight, double targetLeft, double targetRight, double y){
+    Hive(double maxLeft, double maxRight, double targetLeft, double targetRight, double y){
         this.maxLeft = maxLeft;
         this.maxRight = maxRight;
         this.targetLeft = targetLeft;
@@ -34,4 +30,6 @@ public enum HivePose {
                 * (targetRight - targetLeft);
         return new Pose(targetX, y, 0);
     }
+
+
 }
