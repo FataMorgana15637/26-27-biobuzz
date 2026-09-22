@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.fataopmode.impl.robot.turret;
 
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.DriveSubsystem.drive;
+import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.turret.TurretMode.PASS;
+import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.turret.TurretMode.SCORE;
 
 import static utility.actionBase.actions.Actions.simply;
 
@@ -22,6 +24,8 @@ public class TurretSubsystem extends Subsystem {
 
     private ServoEx servoOne;
     private ServoEx servoTwo;
+
+    private TurretMode turretMode = SCORE;
     private ServoExGroup turretServos;
 
     private Supplier<Double> target = () -> 0.0;
@@ -49,7 +53,13 @@ public class TurretSubsystem extends Subsystem {
 
     @Override
     public void loop() {
+        if (turretMode == SCORE){
+            aimToGoal().schedule();
+        }
 
+        if (turretMode == PASS){
+            pass().schedule();
+        }
     }
 
     @Override
@@ -83,7 +93,7 @@ public class TurretSubsystem extends Subsystem {
         return target.get();
     }
 
-    public Action aimToGoal(){
+    private Action aimToGoal(){
         return simply(() ->{
             setTarget(() ->
                     turret().getDegreesTo(
@@ -94,8 +104,13 @@ public class TurretSubsystem extends Subsystem {
         });
     }
 
-    public Action pass(){
-        return simply(() -> {});
+    private Action pass(){
+        return simply(() -> {
+
+        });
     }
 
+    public void SetTurretMode(TurretMode turretMode){
+        this.turretMode = turretMode;
+    }
 }
