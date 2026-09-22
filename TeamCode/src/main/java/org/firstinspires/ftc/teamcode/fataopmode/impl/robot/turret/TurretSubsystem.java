@@ -2,14 +2,19 @@ package org.firstinspires.ftc.teamcode.fataopmode.impl.robot.turret;
 
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.DriveSubsystem.drive;
 
+import static utility.actionBase.actions.Actions.simply;
+
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 import com.seattlesolvers.solverslib.hardware.servos.ServoExGroup;
 
 import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.Subsystem;
+import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.HivePose;
 
 import java.util.function.Supplier;
+
+import utility.actionBase.Action;
 
 public class TurretSubsystem extends Subsystem {
     private static final TurretSubsystem turret = new TurretSubsystem();
@@ -27,7 +32,7 @@ public class TurretSubsystem extends Subsystem {
     @Override
     public void hardwareInit() {
         servoOne = getServo("servo one", 0.0, 360.0);
-        servoTwo = getServo("two", 0.0, 360);
+        servoTwo = getServo("two", 0.0, 360.0);
         turretServos = getServoGroup(servoOne, servoTwo);
     }
 
@@ -68,13 +73,27 @@ public class TurretSubsystem extends Subsystem {
 
         return angle;
     }
-
     public void setTarget(Supplier<Double> target){
         this.target = target;
     }
-
     public double getTarget(){
         return target.get();
+    }
+
+    public Action aimToGoal(){
+        return simply(() ->{
+            setTarget(() ->
+                    turret().getDegreesTo(
+                            drive().getHivePose()
+                                    .getTarget(drive().getX())
+
+                    )
+            );
+        });
+    }
+
+    public Action pass(){
+        return simply(() -> {});
     }
 
 }
