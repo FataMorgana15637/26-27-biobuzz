@@ -7,13 +7,10 @@ import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.turret.Turret
 import static utility.actionBase.actions.Actions.simply;
 
 import com.pedropathing.math.Pose;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 import com.seattlesolvers.solverslib.hardware.servos.ServoExGroup;
-import com.seattlesolvers.solverslib.util.InterpLUT;
 
 import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.Subsystem;
-import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.HivePose;
 
 import java.util.function.Supplier;
 
@@ -53,11 +50,11 @@ public class TurretSubsystem extends Subsystem {
 
     @Override
     public void loop() {
-        if (turretMode == SCORE){
+        if (turretMode == SCORE) {
             aimToGoal().schedule();
         }
 
-        if (turretMode == PASS){
+        if (turretMode == PASS) {
             pass().schedule();
         }
     }
@@ -74,8 +71,8 @@ public class TurretSubsystem extends Subsystem {
     private double getDegreesTo(Pose target){
          double angle = Math.toDegrees(
                  Math.atan2(
-                         target.y() - drive().getY(),
-                         target.x() - drive().getX()
+                         target.y() - drive().y(),
+                         target.x() - drive().x()
                  ) - Math.toRadians(drive().getHeading())
          );
 
@@ -97,8 +94,8 @@ public class TurretSubsystem extends Subsystem {
         return simply(() ->{
             setTarget(() ->
                     turret().getDegreesTo(
-                            drive().getHivePose()
-                                    .getTarget(drive().getX())
+                            drive().getHive()
+                                    .getTarget(drive().x())
                     )
             );
         });
