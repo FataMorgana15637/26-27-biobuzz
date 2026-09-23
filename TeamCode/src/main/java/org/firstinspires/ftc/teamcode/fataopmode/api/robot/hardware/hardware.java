@@ -10,6 +10,7 @@ import com.seattlesolvers.solverslib.hardware.SensorRevColorV3;
 import com.seattlesolvers.solverslib.hardware.motors.CRServoEx;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
+import com.seattlesolvers.solverslib.hardware.motors.MotorGroup;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 import com.seattlesolvers.solverslib.hardware.motors.CRServo;
 import com.seattlesolvers.solverslib.hardware.servos.ServoExGroup;
@@ -42,6 +43,10 @@ public interface hardware {
         return motor;
     }
 
+    default MotorGroup getMotorGroup(@NonNull Motor leader, Motor... followers){
+        return new MotorGroup(leader, followers);
+    }
+
     default ServoEx getServo(String name) {
         return getServo(name, isHardwareEnabled());
     }
@@ -54,7 +59,7 @@ public interface hardware {
         return servoEx;
     }
     default ServoEx getServo(String name, double min, double max) {
-        getServo(name, isHardwareEnabled(), min, max);
+        return getServo(name, isHardwareEnabled(), min, max);
     }
 
     default ServoEx getServo(String name, boolean enabled, double min, double max) {

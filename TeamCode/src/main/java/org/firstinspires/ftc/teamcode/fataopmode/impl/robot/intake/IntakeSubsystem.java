@@ -1,27 +1,39 @@
 package org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake;
 
+import static utility.actionBase.actions.Actions.simply;
+
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
+import com.seattlesolvers.solverslib.hardware.motors.MotorGroup;
+
 import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.Subsystem;
 
+import java.util.function.Supplier;
+
+import utility.actionBase.Action;
+
 public class IntakeSubsystem extends Subsystem {
-    private MotorEx intakeMotor;
-    private MotorEx intakeSecMotor;
-//    private MotorEx transferMotor;
-    private double power = 0.0;
+    private MotorEx intakeMotorTop;
+    private MotorEx intakeMotorBottom;
+    private MotorGroup intakeMotors;
+    private MotorEx transferMotor;
+    private Supplier<Double> intakePower = () -> 0.0;
+    private Supplier<Double> transferPower = () -> 0.0;
     private static final IntakeSubsystem intake = new IntakeSubsystem();
 
-    public static IntakeSubsystem intake(){
+    public static IntakeSubsystem intake() {
         return intake;
     }
 
     @Override
     public void hardwareInit() {
-        intakeMotor = getDcMotorEx("firstIntake");
-        intakeSecMotor = getDcMotorEx("secIntake");
-//        transferMotor = getDcMotorEx("transfer");
+        intakeMotorTop = getDcMotorEx("firstIntake");
+        intakeMotorBottom = getDcMotorEx("secIntake");
+        intakeMotors = getMotorGroup(intakeMotorTop, intakeMotorBottom);
 
-        intakeMotor.setInverted(true);
-        intakeSecMotor.setInverted(true);
+        transferMotor = getDcMotorEx("transfer");
+
+        intakeMotorTop.setInverted(true);
+        intakeMotorBottom.setInverted(false);
     }
 
     @Override
@@ -36,9 +48,8 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void loop() {
-        intakeMotor.set(power);
-        intakeSecMotor.set(power);
-//        transferMotor.set(power);
+        intakeUpdate().schedule();
+        transferUpdate().schedule();
     }
 
     @Override
@@ -46,8 +57,27 @@ public class IntakeSubsystem extends Subsystem {
 
     }
 
-    public void setPower(double power){
-        intakeMotor.set(power);
-        intakeSecMotor.set(power);
+    public void setIntakePower(Supplier<Double> power) {
+        intakePower = power;
+    }
+
+    public void setTransferPower(Supplier<Double> power) {
+        transferPower = power;
+    }
+
+    public double getIntakePower() {
+        return intakePower.get();
+    }
+
+    public double getTransferPower() {
+        return transferPower.get();
+    }
+
+    private Action intakeUpdate(){
+        return simply(() -> intakeMotors.set(getIntakePower()));
+    }
+
+    private Action transferUpdate(){
+        return simply(() -> transferMotor.set(getTransferPower()));
     }
 }
