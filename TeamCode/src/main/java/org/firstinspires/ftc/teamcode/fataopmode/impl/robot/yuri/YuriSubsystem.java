@@ -9,6 +9,7 @@ import com.seattlesolvers.solverslib.util.InterpLUT;
 
 import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.Subsystem;
 import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.Hive;
+import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriActions.YuriActions;
 
 import utility.actionBase.Action;
 
@@ -16,7 +17,12 @@ import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.DriveSu
 import static utility.actionBase.actions.Actions.simply;
 import static utility.actionBase.actions.Actions.waitUntil;
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.turret.TurretSubsystem.turret;
+import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriActions.YuriActions.setHood;
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriConstents.*;
+import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.HoodPose.*;
+
+import java.util.Base64;
+import java.util.function.Supplier;
 
 public class YuriSubsystem extends Subsystem {
     private MotorEx  yuriMotor;
@@ -25,6 +31,7 @@ public class YuriSubsystem extends Subsystem {
     private static final YuriSubsystem yuri = new YuriSubsystem();
     private HoodPose hoodPose = HoodPose.HOOD_CLOSED;
 
+    private Supplier<Double> hoodTarget = HOOD_CLOSED.pose;
     public static YuriSubsystem yuri() {
     return yuri;
     }
@@ -45,39 +52,52 @@ public class YuriSubsystem extends Subsystem {
     public void play(){}
 
     @Override
-    public void loop(){}
+    public void loop(){
+        scoreCalc().schedule();
+    }
 
     @Override
     public void stop(){}
 
-    private Action hoodUpdate() {
-        return null;
-//    return simply(() ->);
-    }
     public void setPower(double power){
         this.power = power;
     }
+    public void setHoodTarget(Supplier<Double> hoodTarget){
+        this.hoodTarget = hoodTarget;
+    }
 
-    private Action bang(double target) {
+    public double getHoodTarget(){
+        return hoodTarget.get();
+    }
+
+    private Action hoodUpdate() {
         return simply(() -> {
-        if (yuriMotor.getCurrentPosition() < target) {
+            hoodTarget =
+                    hoodDebug == -1 ? hoodTarget : () -> hoodDebug;
+            hood.set(hoodTarget.get());
+        });
+    }
+
+    private Action bang(Supplier<Double> target) {
+        return simply(() -> {
+        if (yuriMotor.getCurrentPosition() < target.get()) {
             yuriMotor.set(maxBangConstents);
         } else yuriMotor.set(-maxBangConstents);
         });
     }
 
-    private Action pf(double target) {
+    private Action pf(Supplier<Double> target) {
         return simply(() -> {
-        double error = Math.abs(yuriMotor.getCurrentPosition() - target);
+        double error = Math.abs(yuriMotor.getCurrentPosition() - target.get());
         yuriMotor.set(f * yuriMotor.getVelocity() *
-                (yuriMotor.getCurrentPosition() < target ? 1 : -1)
+                (yuriMotor.getCurrentPosition() < target.get() ? 1 : -1)
                 + p * error);
         });
     }
 
-    public Action bangBangController(double ofeksMom) {
+    private Action bangBangController(Supplier<Double> ofeksMom) {
         return bang(ofeksMom).then(
-                waitUntil(() -> yuriMotor.getVelocity() == ofeksMom))
+                waitUntil(() -> yuriMotor.getVelocity() == ofeksMom.get()))
                 .then(pf(ofeksMom));
     }
 
@@ -133,27 +153,28 @@ public class YuriSubsystem extends Subsystem {
         );
     }
 
-    private double calcBallVelocity(){
+    private Supplier<Double> calcBallVelocity(){
         double highDiff = getHiveHight() - shooterHight;
-        return Math.sqrt(g * getHiveDist() * getHiveDist() /
+        return () ->(Math.sqrt(g * getHiveDist() * getHiveDist() /
                 (2*Math.pow(Math.cos(calcHoodAngle()), 2)) * getHiveDist() * (Math.tan(calcHoodAngle()) - highDiff)
-        );
+        ));
     }
 
-    private double ballToYuriVelocity(double ballVelocity){
+    private Supplier<Double> ballToYuriVelocity(Supplier<Double> ballVelocity){
         InterpLUT ballToYuriVel;
         ballToYuriVel = new InterpLUT();
 
         ballToYuriVel.add(0,0);
 
         double clippedBallVelocity;
-        clippedBallVelocity = Range.clip(minBallVelocity, maxBallVelocity, ballVelocity);
-        return ballToYuriVel.get(clippedBallVelocity);
+        clippedBallVelocity = Range.clip(minBallVelocity, maxBallVelocity, ballVelocity.get());
+        return () -> ballToYuriVel.get(clippedBallVelocity);
     }
 
-    private Action scoreCalc(){
-        return simply(() -> {
-            calcBallVelocity();
-        });
+    private Action scoreCalc() {
+            return bangBangController(
+                    ballToYuriVelocity(calcBallVelocity())
+            ).also(
+                    setHood(this::calcHoodAngle));
     }
 }
