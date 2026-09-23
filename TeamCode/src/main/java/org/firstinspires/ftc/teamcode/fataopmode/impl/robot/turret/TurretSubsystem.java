@@ -91,7 +91,7 @@ public class TurretSubsystem extends Subsystem {
     }
 
     private Action aimToGoal(){
-        return simply(() ->{
+        return simply(() -> {
             setTarget(() ->
                     turret().getDegreesTo(
                             drive().getHive()
@@ -107,7 +107,9 @@ public class TurretSubsystem extends Subsystem {
         });
     }
 
-    public void SetTurretMode(TurretMode turretMode){
+    public void SetTurretMode(TurretMode turretMode) {
         this.turretMode = turretMode;
     }
+
+
 }

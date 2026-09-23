@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri;
 
 import com.pedropathing.math.Pose;
+import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
+import com.seattlesolvers.solverslib.util.InterpLUT;
+
 import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.Subsystem;
 import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.Hive;
 
@@ -55,7 +58,7 @@ public class YuriSubsystem extends Subsystem {
         this.power = power;
     }
 
-    private Action bang(double target){
+    private Action bang(double target) {
         return simply(() -> {
         if (yuriMotor.getCurrentPosition() < target) {
             yuriMotor.set(maxBangConstents);
@@ -63,7 +66,7 @@ public class YuriSubsystem extends Subsystem {
         });
     }
 
-    private Action pf(double target){
+    private Action pf(double target) {
         return simply(() -> {
         double error = Math.abs(yuriMotor.getCurrentPosition() - target);
         yuriMotor.set(f * yuriMotor.getVelocity() *
@@ -78,20 +81,79 @@ public class YuriSubsystem extends Subsystem {
                 .then(pf(ofeksMom));
     }
 
-    private Pose getShooterPose(){
+    private Pose getShooterPose() {
         double theta = drive().getHeading();
         double x = drive().x() - shooterOffset * Math.sin(theta);
         double y = drive().y() + shooterOffset * Math.cos(theta);
         return new Pose(x, y, turret().getTurretAngle());
     }
 
-    private double getHiveDist(){
-        Hive hive = drive().getHive();
-        Pose hivePose = hive.getTarget(drive().x());
+    private double getHiveDist() {
+        Pose hivePose = getHiveTarget();
         Pose shooterPose = getShooterPose();
         return Math.sqrt(Math.pow(hivePose.x() - shooterPose.x(), 2) + Math.pow(hivePose.y() - shooterPose.x(), 2));
     }
 
+    private Pose getHiveTarget() {
+        return drive().getHive().getTarget(drive().x());
+    }
+
+    private double getHiveHight() {
+        double hiveHight;
+        double x = getHiveTarget().x();
+
+        InterpLUT hightLUT;
+        hightLUT = new InterpLUT();
+
+        hightLUT.add(0,0); // TODO
+
+        hiveHight = hightLUT.get(x);
+        return hiveHight;
+    }
+
+    private double getTrajectoryAngle(){
+        double trajectory;
+        double x = getHiveTarget().x();
+
+        InterpLUT trajectoryLUT;
+        trajectoryLUT = new InterpLUT();
+
+        trajectoryLUT.add(0,0); // TODO
+
+        trajectory = trajectoryLUT.get(x);
+        return trajectory;
+    }
 
 
+    private double calcHoodAngle(){
+        double hightDiff = getHiveHight() - shooterHight;
+        return Math.atan(
+                2 * hightDiff/
+                        getHiveDist() - Math.tan(getTrajectoryAngle())
+        );
+    }
+
+    private double calcBallVelocity(){
+        double highDiff = getHiveHight() - shooterHight;
+        return Math.sqrt(g * getHiveDist() * getHiveDist() /
+                (2*Math.pow(Math.cos(calcHoodAngle()), 2)) * getHiveDist() * (Math.tan(calcHoodAngle()) - highDiff)
+        );
+    }
+
+    private double ballToYuriVelocity(double ballVelocity){
+        InterpLUT ballToYuriVel;
+        ballToYuriVel = new InterpLUT();
+
+        ballToYuriVel.add(0,0);
+
+        double clippedBallVelocity;
+        clippedBallVelocity = Range.clip(minBallVelocity, maxBallVelocity, ballVelocity);
+        return ballToYuriVel.get(clippedBallVelocity);
+    }
+
+    private Action scoreCalc(){
+        return simply(() -> {
+            calcBallVelocity();
+        });
+    }
 }

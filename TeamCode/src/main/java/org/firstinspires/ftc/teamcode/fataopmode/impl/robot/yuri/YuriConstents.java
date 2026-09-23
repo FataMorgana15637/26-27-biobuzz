@@ -13,4 +13,8 @@ public class YuriConstents {
     public static double hoodClosed = 0.2;
 
     public static double shooterOffset = 0.0;
-    }
+    public static double shooterHight = 0.0;
+    public static double g = 9.80665;
+    public static double minBallVelocity;
+    public static double maxBallVelocity;
+}
