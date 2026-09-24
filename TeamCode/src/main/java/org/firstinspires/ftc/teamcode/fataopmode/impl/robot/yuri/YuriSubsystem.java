@@ -8,8 +8,6 @@ import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 import com.seattlesolvers.solverslib.util.InterpLUT;
 
 import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.Subsystem;
-import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.Hive;
-import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriActions.YuriActions;
 
 import utility.actionBase.Action;
 
@@ -21,7 +19,6 @@ import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriActi
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriConstents.*;
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.HoodPose.*;
 
-import java.util.Base64;
 import java.util.function.Supplier;
 
 public class YuriSubsystem extends Subsystem {
@@ -29,9 +26,7 @@ public class YuriSubsystem extends Subsystem {
     private ServoEx hood;
     private double power = 0.0;
     private static final YuriSubsystem yuri = new YuriSubsystem();
-    private HoodPose hoodPose = HoodPose.HOOD_CLOSED;
-
-    private Supplier<Double> hoodTarget = HOOD_CLOSED.pose;
+    private HoodPose hoodPose = HOOD_CLOSED;
     public static YuriSubsystem yuri() {
     return yuri;
     }
@@ -62,19 +57,17 @@ public class YuriSubsystem extends Subsystem {
     public void setPower(double power){
         this.power = power;
     }
-    public void setHoodTarget(Supplier<Double> hoodTarget){
-        this.hoodTarget = hoodTarget;
+    public void setHoodPose(HoodPose hoodPose){
+        this.hoodPose = hoodPose;
     }
 
-    public double getHoodTarget(){
-        return hoodTarget.get();
+    public HoodPose getHoodPose(){
+        return hoodPose;
     }
 
     private Action hoodUpdate() {
         return simply(() -> {
-            hoodTarget =
-                    hoodDebug == -1 ? hoodTarget : () -> hoodDebug;
-            hood.set(hoodTarget.get());
+            hood.set(hoodDebug == -1 ? hoodPose.pose.get() : hoodDebug);
         });
     }
 
@@ -131,7 +124,7 @@ public class YuriSubsystem extends Subsystem {
         return hiveHight;
     }
 
-    private double getTrajectoryAngle(){
+    private double getHiveTrajectoryAngle(){
         double trajectory;
         double x = getHiveTarget().x();
 
@@ -145,18 +138,29 @@ public class YuriSubsystem extends Subsystem {
     }
 
 
-    private double calcHoodAngle(){
+    private Supplier<Double> calcScoreHoodAngle(){
         double hightDiff = getHiveHight() - shooterHight;
-        return Math.atan(
+        return () -> Math.atan(
                 2 * hightDiff/
-                        getHiveDist() - Math.tan(getTrajectoryAngle())
+                        getHiveDist() - Math.tan(getHiveTrajectoryAngle())
         );
     }
+//    private Supplier<Double> calcPassHoodAngle(){
+//        double hightDiff = passHightDiff;
+//        return () -> Math.atan(
+//                2 * hightDiff/
+//                        getHiveDist() - Math.tan(getHiveTrajectoryAngle())
+//        );
+//    }
+    public Supplier<Double> getCalcHoodAngle(){
+        return calcScoreHoodAngle();
+    }
 
-    private Supplier<Double> calcBallVelocity(){
+    private Supplier<Double> calcScoreBallVelocity(){
         double highDiff = getHiveHight() - shooterHight;
+        double hoodAngle = calcScoreHoodAngle().get();
         return () ->(Math.sqrt(g * getHiveDist() * getHiveDist() /
-                (2*Math.pow(Math.cos(calcHoodAngle()), 2)) * getHiveDist() * (Math.tan(calcHoodAngle()) - highDiff)
+                (2*Math.pow(Math.cos(hoodAngle), 2)) * getHiveDist() * (Math.tan(hoodAngle) - highDiff)
         ));
     }
 
@@ -173,8 +177,10 @@ public class YuriSubsystem extends Subsystem {
 
     private Action scoreCalc() {
             return bangBangController(
-                    ballToYuriVelocity(calcBallVelocity())
+                    ballToYuriVelocity(calcScoreBallVelocity())
             ).also(
-                    setHood(this::calcHoodAngle));
+                    setHood(CALC));
     }
+
+
 }

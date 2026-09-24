@@ -17,4 +17,5 @@ public class YuriConstents {
     public static double g = 9.80665;
     public static double minBallVelocity;
     public static double maxBallVelocity;
+    public static double passHightDiff = -shooterHight;
 }

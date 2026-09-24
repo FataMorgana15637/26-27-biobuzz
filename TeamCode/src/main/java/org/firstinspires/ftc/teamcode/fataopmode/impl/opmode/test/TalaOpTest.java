@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.fataopmode.api.opmode.FataOpMode;
 import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake.actions.IntakeActions;
 
 import static org.firstinspires.ftc.teamcode.fataopmode.api.fataUtil.action.GamepadFactory.button;
+import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.DriveSubsystem.drive;
 import static utility.actionBase.actions.Actions.simply;
 
 @TeleOp
@@ -24,7 +25,7 @@ public class TalaOpTest extends FataOpMode {
 
     protected void onPlay() {
         super.onPlay();
-        button(() -> gamepad1.right_bumper).whenPressed(() -> IntakeActions.setPower(1)).create().schedule();
+//        button(() -> gamepad1.right_bumper).whenPressed(() -> IntakeActions.setPower(1)).create().schedule();
 
     }
 //
@@ -34,11 +35,10 @@ public class TalaOpTest extends FataOpMode {
         FataMain.getTelemetry().addData("config",TestConfig.configVal);
         FataMain.getTelemetry().addData("buttonTest", thing);
 
-//        drive().setTeleOpDrive(
-//                gamepad1.left_stick_y / (gamepad1.right_trigger > 0.3 ? 4.5 : 1),
-//                gamepad1.left_stick_x / (gamepad1.right_trigger > 0.3 ? 4.5 : 1),
-//                -gamepad1.right_stick_x / (gamepad1.right_trigger > 0.3 ? 4.5 : 1),
-//                false
-//        );
+        drive().TeleOpDrive(
+                gamepad1.left_stick_y / (gamepad1.right_trigger > 0.3 ? 4.5 : 1),
+                gamepad1.left_stick_x / (gamepad1.right_trigger > 0.3 ? 4.5 : 1),
+                -gamepad1.right_stick_x / (gamepad1.right_trigger > 0.3 ? 4.5 : 1)
+        );
     }
 }

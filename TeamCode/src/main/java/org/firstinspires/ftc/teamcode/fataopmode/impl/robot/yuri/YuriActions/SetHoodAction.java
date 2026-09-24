@@ -4,15 +4,17 @@ import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriSubs
 
 import static utility.actionBase.actions.Actions.simply;
 
+import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.HoodPose;
+
 import java.util.function.Supplier;
 
 import utility.actionBase.runners.SequentialActionRunner;
 
 public class SetHoodAction extends SequentialActionRunner {
-    SetHoodAction(Supplier<Double> target){
+    SetHoodAction(HoodPose hoodPose){
         super(
                 simply( () -> {
-                    yuri().setHoodTarget(target);
+                    yuri().setHoodPose(hoodPose);
                 })
         );
     }
