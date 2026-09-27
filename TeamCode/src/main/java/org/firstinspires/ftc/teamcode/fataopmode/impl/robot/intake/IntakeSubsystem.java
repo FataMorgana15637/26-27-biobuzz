@@ -5,23 +5,21 @@ import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.Subsystem;
 
 public class IntakeSubsystem extends Subsystem {
     private MotorEx intakeMotor;
-    private MotorEx intakeSecMotor;
-//    private MotorEx transferMotor;
+    private MotorEx transferMotor;
     private double power = 0.0;
     private static final IntakeSubsystem intake = new IntakeSubsystem();
 
     public static IntakeSubsystem intake(){
-        return intake;
+return intake;
     }
 
     @Override
     public void hardwareInit() {
-        intakeMotor = getDcMotorEx("firstIntake");
-        intakeSecMotor = getDcMotorEx("secIntake");
-//        transferMotor = getDcMotorEx("transfer");
+        intakeMotor = getDcMotorEx("Intake");
+        transferMotor = getDcMotorEx("transfer");
 
         intakeMotor.setInverted(true);
-        intakeSecMotor.setInverted(true);
+        transferMotor.setInverted(true);
     }
 
     @Override
@@ -37,8 +35,7 @@ public class IntakeSubsystem extends Subsystem {
     @Override
     public void loop() {
         intakeMotor.set(power);
-        intakeSecMotor.set(power);
-//        transferMotor.set(power);
+        transferMotor.set(power);
     }
 
     @Override
@@ -46,8 +43,11 @@ public class IntakeSubsystem extends Subsystem {
 
     }
 
-    public void setPower(double power){
+    public void setIntakePower(double power){
         intakeMotor.set(power);
-        intakeSecMotor.set(power);
+    }
+
+    public void setTransferpower(double power){
+        transferMotor.set(power);
     }
 }

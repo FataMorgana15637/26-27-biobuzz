@@ -6,10 +6,12 @@ import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake.Intake
 import static utility.actionBase.actions.Actions.simply;
 
 public class IntakeTransferAction extends SequentialActionRunner {
-    IntakeTransferAction(){
-
+    IntakeTransferAction(double power){
         super(
-//                simply(() -> )
+                simply(() -> {
+                    intake().setIntakePower(power);
+                    intake().setTransferpower(power);
+                })
         );
     }
 }

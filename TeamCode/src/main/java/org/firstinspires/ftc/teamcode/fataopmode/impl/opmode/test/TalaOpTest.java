@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake.actions.Intak
 
 import static org.firstinspires.ftc.teamcode.fataopmode.api.fataUtil.action.GamepadFactory.button;
 import static utility.actionBase.actions.Actions.simply;
+import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake.actions.IntakeActions.*;
 
 @TeleOp
 @Configurable
@@ -24,7 +25,7 @@ public class TalaOpTest extends FataOpMode {
 
     protected void onPlay() {
         super.onPlay();
-        button(() -> gamepad1.right_bumper).whenPressed(() -> IntakeActions.setPower(1)).create().schedule();
+        button(() -> gamepad1.right_bumper).whenPressed(() -> setIntake(1)).create().schedule();
 
     }
 //
