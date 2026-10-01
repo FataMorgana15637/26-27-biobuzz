@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 public class DriveSubsystem extends Subsystem {
 
-    private static DriveSubsystem drive = new DriveSubsystem();
+    private static final DriveSubsystem drive = new DriveSubsystem();
 
     public static DriveSubsystem drive(){
         return drive;
