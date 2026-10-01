@@ -9,6 +9,8 @@ import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake.actions.Intak
 
 import static org.firstinspires.ftc.teamcode.fataopmode.api.fataUtil.action.GamepadFactory.button;
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.DriveSubsystem.drive;
+import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake.IntakeSubsystem.intake;
+import static utility.actionBase.actions.Actions.perpetually;
 import static utility.actionBase.actions.Actions.simply;
 
 @TeleOp
@@ -19,18 +21,18 @@ public class TalaOpTest extends FataOpMode {
     @Override
     protected void onInit() {
         super.onInit();
-        yuriMotor = FataMain.getCurrentOpMode().hardwareMap.dcMotor.get("motor");
+//        yuriMotor = FataMain.getCurrentOpMode().hardwareMap.dcMotor.get("motor");
 
     }
 
     protected void onPlay() {
         super.onPlay();
 //        button(() -> gamepad1.right_bumper).whenPressed(() -> IntakeActions.setPower(1)).create().schedule();
-
     }
 //
     protected void onLoop() {
         super.onLoop();
+        simply(() -> FataMain.getTelemetry().addLine("name")).schedule();
 
         FataMain.getTelemetry().addData("config",TestConfig.configVal);
         FataMain.getTelemetry().addData("buttonTest", thing);

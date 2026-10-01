@@ -4,6 +4,8 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.seattlesolvers.solverslib.photon.PhotonCore;
 import org.firstinspires.ftc.teamcode.fataopmode.FataMain;
 import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.Subsystem;
+import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake.IntakeSubsystem;
 
 import java.util.List;
 
@@ -11,7 +13,8 @@ import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake.Intake
 
 public class FataRobot {
     private final Subsystem[] subsystems= {
-        intake()
+            IntakeSubsystem.intake(),
+            DriveSubsystem.drive()
     };
 
     public void init() {

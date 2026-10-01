@@ -5,15 +5,18 @@ import utility.actionBase.Action;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ObserveAction extends AbstractAction {
 
     private final BooleanSupplier condition;
-    private final Function<Boolean, Action> actionFactory;
+    private final Supplier<Action> a, b;
+
 
     private Action action;
-    public ObserveAction(BooleanSupplier condition, Function<Boolean, Action> actionFactory){
-        this.actionFactory = actionFactory;
+    public ObserveAction(BooleanSupplier condition, Supplier<Action> a, Supplier<Action> b){
+        this.a = a;
+        this.b = b;
         this.condition = condition;
     }
 
@@ -24,7 +27,7 @@ public class ObserveAction extends AbstractAction {
 
     @Override
     public void start(){
-        action = actionFactory.apply(condition.getAsBoolean());
+        action = (condition.getAsBoolean() ? a : b).get();
         action.start();
         super.start();
     }

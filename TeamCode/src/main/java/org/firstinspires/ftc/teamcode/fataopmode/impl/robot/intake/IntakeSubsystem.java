@@ -49,12 +49,12 @@ public class IntakeSubsystem extends Subsystem {
 
         transferMotor = getDcMotorEx("transfer");
 
-        intakeServo = getServo("intake");
+//        intakeServo = getServo("intake");
 
-        intakeBeamFront = getDigitalChannel("intakeBeamFront");
-        intakeBeamBack = getDigitalChannel("intakeBeamBack");
-        outtakeBeamBottom = getDigitalChannel("outtakeBeamBack");
-        outtakeBeamTop = getDigitalChannel("outtakeBeamBack");
+        intakeBeamFront = getDigitalChannel("intakeBeamFront", false);
+        intakeBeamBack = getDigitalChannel("intakeBeamBack", false);
+        outtakeBeamBottom = getDigitalChannel("outtakeBeamBack", false);
+        outtakeBeamTop = getDigitalChannel("outtakeBeamBack", false);
 
         intakeMotorTop.setInverted(true);
         intakeMotorBottom.setInverted(false);
@@ -74,7 +74,7 @@ public class IntakeSubsystem extends Subsystem {
     public void loop() {
         intakeUpdate().schedule();
         transferUpdate().schedule();
-        servoUpdate().schedule();
+//        servoUpdate().schedule();
         beamUpdate().schedule();
         ballUpdate().schedule();
     }

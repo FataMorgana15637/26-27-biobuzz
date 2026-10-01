@@ -13,8 +13,8 @@ public class Actions {
         return new LazyAction(action);
     }
 
-    public static Action observe(BooleanSupplier condition, Function<Boolean, Action> actionFactory){
-        return new ObserveAction(condition, actionFactory);
+    public static Action observe(BooleanSupplier condition,  Supplier<Action> a, Supplier<Action> b){
+        return new ObserveAction(condition, a, b);
     }
 
     public static Action repeat(int times, IntFunction<Action> actionFactory){

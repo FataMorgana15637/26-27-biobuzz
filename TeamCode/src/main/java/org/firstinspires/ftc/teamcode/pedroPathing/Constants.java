@@ -23,29 +23,26 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  */
 public class Constants {
     public static MecanumConfig drivetrainConfig = new MecanumConfig(c -> {
-        c.frontLeftName.set("lf");
-        c.backLeftName.set("lr");
-        c.frontRightName.set("rf");
-        c.backRightName.set("rr");
-
+        c.frontLeftName.set("fl");
+        c.frontRightName.set("fr");
+        c.backLeftName.set("bl");
+        c.backRightName.set("br");
         c.frontLeftDirection.set(DcMotorSimple.Direction.REVERSE);
-        c.backLeftDirection.set(DcMotorSimple.Direction.REVERSE);
         c.frontRightDirection.set(DcMotorSimple.Direction.FORWARD);
+        c.backLeftDirection.set(DcMotorSimple.Direction.REVERSE);
         c.backRightDirection.set(DcMotorSimple.Direction.FORWARD);
-
-        c.powerThreshold.set(0.01);
-        c.manualBrakeMode.set(false);
+        c.manualBrakeMode.set(true);
     });
 
     public static PinpointConfig localizerConfig = new PinpointConfig(c -> {
         c.name.set("pinpoint");
-        c.xPodOffset.set(-5.0);
-        c.yPodOffset.set(0.5);
-        c.offsetUnits.set(DistanceUnit.INCH);
-        c.globalDistanceUnit.set(DistanceUnit.INCH);
         c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED);
-        c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        c.xPodOffset.set(6.225549893116388);
+        c.yPodOffset.set(-2.962197431429165);
+        c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        c.globalDistanceUnit.set(DistanceUnit.INCH);
+        c.offsetUnits.set(DistanceUnit.INCH);
     });
 
     public static ForesightConfig foresightConfig = new ForesightConfig(c -> {

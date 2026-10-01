@@ -1,12 +1,14 @@
 package utility.actionBase;
 
+import org.firstinspires.ftc.teamcode.fataopmode.FataMain;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ActionScheduler {
-    private final ArrayList<Action> actions = new ArrayList<>();
+    private static final ArrayList<Action> actions = new ArrayList<>();
 
-    public void schedule(Action action){
+    public static void schedule(Action action){
         if (actions.contains(action)) throw new UnsupportedOperationException(
                 "Trying to schedule an already scheduled action instance of type " + action.getClass().getName()
         );
@@ -14,8 +16,9 @@ public class ActionScheduler {
         actions.add(action);
     }
 
-    public void update(){
-        ArrayList<Action> temp =new ArrayList<>(actions);
+    public static void update(){
+//        FataMain.getTelemetry().addData("thing", 1);
+        ArrayList<Action> temp = new ArrayList<>(actions);
         for (Action action : temp){
             if (!action.isStarted()) action.start();
 
@@ -26,7 +29,7 @@ public class ActionScheduler {
         actions.removeIf(Action::isFinished);
     }
 
-    public void clear(){
+    public static void clear(){
         actions.clear();
     }
 }
