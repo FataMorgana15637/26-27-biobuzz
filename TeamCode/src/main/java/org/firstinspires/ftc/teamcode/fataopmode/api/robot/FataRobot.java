@@ -14,7 +14,7 @@ import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake.Intake
 public class FataRobot {
     private final Subsystem[] subsystems= {
             IntakeSubsystem.intake(),
-            DriveSubsystem.drive()
+            DriveSubsystem.drive(),
     };
 
     public void init() {

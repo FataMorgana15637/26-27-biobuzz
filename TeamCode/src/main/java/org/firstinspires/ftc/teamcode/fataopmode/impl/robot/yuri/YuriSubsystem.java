@@ -37,7 +37,7 @@ public class YuriSubsystem extends Subsystem {
     @Override
     public void hardwareInit(){
         yuriMotor = getDcMotorEx("yuri");
-        hood = getServo("hood");
+//        hood = getServo("hood");
         yuriMotor.setInverted(false);
         yuriMotor.setRunMode(Motor.RunMode.RawPower);
         yuriMotor.stopAndResetEncoder();
@@ -52,6 +52,7 @@ public class YuriSubsystem extends Subsystem {
     @Override
     public void loop(){
         scoreCalc().schedule();
+//        hoodUpdate().schedule();
     }
 
     @Override
@@ -179,10 +180,10 @@ public class YuriSubsystem extends Subsystem {
     }
 
     private Action scoreCalc() {
-            return bangBangController(
-                    ballToYuriVelocity(calcScoreBallVelocity())
-            ).also(
-                    setHood(CALC));
+        return bangBangController(
+                ballToYuriVelocity(calcScoreBallVelocity())
+        ).also(
+                setHood(CALC));
     }
 
     public void setYuriState(YuriState yuriState) {

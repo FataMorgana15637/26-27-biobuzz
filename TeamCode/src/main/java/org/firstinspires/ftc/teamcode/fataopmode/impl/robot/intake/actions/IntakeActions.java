@@ -18,4 +18,8 @@ public class IntakeActions {
     public static Action constantIntake(){
         return new ConstantIntakeAction();
     }
+
+    public static Action intakeEx(){
+        return new TotalIntakeAction();
+    }
 }

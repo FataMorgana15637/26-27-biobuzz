@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.fataopmode.impl.robot.turret;
 
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.drive.DriveSubsystem.drive;
+import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.turret.TurretConstants.*;
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.turret.TurretMode.PASS;
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.turret.TurretMode.SCORE;
 
@@ -94,9 +95,10 @@ public class TurretSubsystem extends Subsystem {
         return simply(() -> {
             setTarget(() ->
                     turret().getDegreesTo(
-                            drive().getHive()
-                                    .getTarget(drive().x())
-                    )
+                            testPose
+//                            drive().getHive()
+//                                    .getTarget(drive().x())
+            )
             );
         });
     }
