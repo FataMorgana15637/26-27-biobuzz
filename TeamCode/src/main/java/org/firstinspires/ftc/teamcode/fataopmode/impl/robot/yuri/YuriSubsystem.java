@@ -8,6 +8,7 @@ import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 import com.seattlesolvers.solverslib.util.InterpLUT;
 
 import org.firstinspires.ftc.teamcode.fataopmode.api.robot.hardware.Subsystem;
+import org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriActions.YuriState;
 
 import utility.actionBase.Action;
 
@@ -16,6 +17,7 @@ import static utility.actionBase.actions.Actions.simply;
 import static utility.actionBase.actions.Actions.waitUntil;
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.turret.TurretSubsystem.turret;
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriActions.YuriActions.setHood;
+import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriActions.YuriState.*;
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriConstents.*;
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.HoodPose.*;
 
@@ -27,6 +29,7 @@ public class YuriSubsystem extends Subsystem {
     private double power = 0.0;
     private static final YuriSubsystem yuri = new YuriSubsystem();
     private HoodPose hoodPose = HOOD_CLOSED;
+    private YuriState yuriState = SEPARATE;
     public static YuriSubsystem yuri() {
     return yuri;
     }
@@ -182,5 +185,11 @@ public class YuriSubsystem extends Subsystem {
                     setHood(CALC));
     }
 
+    public void setYuriState(YuriState yuriState) {
+        this.yuriState = yuriState;
+    }
 
+    public YuriState getYuriState() {
+        return yuriState;
+    }
 }
