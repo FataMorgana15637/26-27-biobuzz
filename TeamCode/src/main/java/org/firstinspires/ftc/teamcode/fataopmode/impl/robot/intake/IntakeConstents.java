@@ -7,7 +7,8 @@ import java.util.function.Supplier;
 @Configurable
 public class IntakeConstents {
     public static Supplier<Double> intakeSpeed = () -> 1.0;
-    public static Supplier<Double> transferSpeed = intakeSpeed;
+    public static Supplier<Double>
+            transferSpeed = intakeSpeed;
     public static Supplier<Double> outtakeSpeed = () ->  -1.0;
     public static Supplier<Double> transferOuttakeSpeed = outtakeSpeed;
     public static Supplier<Double> stopSpeed = () -> 0.0;

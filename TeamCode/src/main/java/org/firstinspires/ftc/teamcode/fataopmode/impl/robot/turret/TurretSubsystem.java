@@ -20,8 +20,8 @@ import utility.actionBase.Action;
 public class TurretSubsystem extends Subsystem {
     private static final TurretSubsystem turret = new TurretSubsystem();
 
-    private ServoEx servoOne;
-    private ServoEx servoTwo;
+    private ServoEx servoR;
+    private ServoEx servoL;
 
     private TurretMode turretMode = SCORE;
     private ServoExGroup turretServos;
@@ -34,9 +34,9 @@ public class TurretSubsystem extends Subsystem {
 
     @Override
     public void hardwareInit() {
-        servoOne = getServo("servo one", 0.0, 360.0);
-        servoTwo = getServo("two", 0.0, 360.0);
-        turretServos = getServoGroup(servoOne, servoTwo);
+        servoR = getServo("servoR", 0.0, 360.0);
+        servoL = getServo("servoL", 0.0, 360.0);
+        turretServos = getServoGroup(servoR, servoL);
     }
 
     @Override

@@ -8,10 +8,10 @@ import java.util.function.Supplier;
 import utility.actionBase.runners.SequentialActionRunner;
 
 public class SetTransferAction extends SequentialActionRunner {
-    SetTransferAction(Supplier<Double> power){
+    SetTransferAction(Supplier<Double> power) {
         super(
-                simply(() ->{
-                    intake().setTransferPower(power);
+                simply(() -> {
+                    intake().setTransfer(power);
                 })
         );
     }

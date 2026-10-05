@@ -36,11 +36,11 @@ public class YuriSubsystem extends Subsystem {
 
     @Override
     public void hardwareInit(){
-//        yuriMotor = getDcMotorEx("yuri");
-//        hood = getServo("hood");
-//        yuriMotor.setInverted(false);
-//        yuriMotor.setRunMode(Motor.RunMode.RawPower);
-//        yuriMotor.stopAndResetEncoder();
+        yuriMotor = getDcMotorEx("yuri");
+        hood = getServo("hood", 10, 20);
+        yuriMotor.setInverted(false);
+        yuriMotor.setRunMode(Motor.RunMode.RawPower);
+        yuriMotor.stopAndResetEncoder();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class YuriSubsystem extends Subsystem {
 
     @Override
     public void loop(){
-//        scoreCalc().schedule();
+        scoreCalc().schedule();
 //        hoodUpdate().schedule();
     }
 
@@ -123,6 +123,7 @@ public class YuriSubsystem extends Subsystem {
         hightLUT = new InterpLUT();
 
         hightLUT.add(0,0); // TODO
+        hightLUT.add(1,0);
 
         hiveHight = hightLUT.get(x);
         return hiveHight;
@@ -136,21 +137,24 @@ public class YuriSubsystem extends Subsystem {
         trajectoryLUT = new InterpLUT();
 
         trajectoryLUT.add(0,0); // TODO
+        trajectoryLUT.add(1,0);
 
         trajectory = trajectoryLUT.get(x);
         return trajectory;
+//        return 0.0;
     }
 
 
-    private Supplier<Double> calcScoreHoodAngle(){
-        return () -> {
+    private double calcScoreHoodAngle(){
+
             double hightDiff = getHiveHight() - shooterHight;
 
             return Math.atan(
                     2 * hightDiff /
                             getHiveDist() - Math.tan(getHiveTrajectoryAngle())
             );
-        };
+
+//    return 0.0;
     }
 //    private Supplier<Double> calcPassHoodAngle(){
 //        double hightDiff = passHightDiff;
@@ -159,34 +163,38 @@ public class YuriSubsystem extends Subsystem {
 //                        getHiveDist() - Math.tan(getHiveTrajectoryAngle())
 //        );
 //    }
-    public Supplier<Double> getCalcHoodAngle(){
+    public double getCalcHoodAngle(){
         return calcScoreHoodAngle();
     }
 
-    private Supplier<Double> calcScoreBallVelocity(){
-        return () -> {
+    private double calcScoreBallVelocity(){
+
             double highDiff = getHiveHight() - shooterHight;
-            double hoodAngle = calcScoreHoodAngle().get();
+            double hoodAngle = calcScoreHoodAngle();
             return (Math.sqrt(g * getHiveDist() * getHiveDist() /
                     (2 * Math.pow(Math.cos(hoodAngle), 2)) * getHiveDist() * (Math.tan(hoodAngle) - highDiff)
             ));
-        };
+
+//        return 0.0;
     }
 
-    private Supplier<Double> ballToYuriVelocity(Supplier<Double> ballVelocity){
+    private double ballToYuriVelocity(Supplier<Double> ballVelocity){
         InterpLUT ballToYuriVel;
         ballToYuriVel = new InterpLUT();
 
-        ballToYuriVel.add(0,0);
+        ballToYuriVel.add(0, 0);
+        ballToYuriVel.add(1,0);
 
         double clippedBallVelocity;
         clippedBallVelocity = Range.clip(minBallVelocity, maxBallVelocity, ballVelocity.get());
-        return () -> ballToYuriVel.get(clippedBallVelocity);
+        return ballToYuriVel.get(clippedBallVelocity);
+
+//        return 0.0;
     }
 
     private Action scoreCalc() {
-        return bangBangController(
-                ballToYuriVelocity(calcScoreBallVelocity())
+        return bangBangController(() ->
+                ballToYuriVelocity(() -> calcScoreBallVelocity())
         ).also(
                 setHood(CALC));
     }

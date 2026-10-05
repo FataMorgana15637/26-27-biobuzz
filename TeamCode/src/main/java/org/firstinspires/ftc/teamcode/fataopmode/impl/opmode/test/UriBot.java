@@ -17,11 +17,12 @@ public class UriBot extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("bl");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("fr");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("br");
-        DcMotor intakeOne = hardwareMap.dcMotor.get("intakeOne");
-        DcMotor intakeTwo = hardwareMap.dcMotor.get("intakeTwo");
-        DcMotor transfer = hardwareMap.dcMotor.get("transfer");
-        DcMotor shooter = hardwareMap.dcMotor.get("shooter");
+        DcMotor intakeOne = hardwareMap.dcMotor.get("firstIntake");
+        DcMotor intakeTwo = hardwareMap.dcMotor.get("secIntake");
+//        DcMotor transfer = hardwareMap.dcMotor.get("transfer");
+        DcMotor shooter = hardwareMap.dcMotor.get("yuri");
 
+        intakeTwo.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeOne.setDirection(DcMotorSimple.Direction.REVERSE);
 
 //         Reverse the right side motors. This may be wrong for your setup.
@@ -39,21 +40,21 @@ public class UriBot extends LinearOpMode {
             if (gamepad1.left_bumper){
             intakeOne.setPower(1);
             intakeTwo.setPower(1);
-            transfer.setPower(1);
+//            transfer.setPower(1);
             } else {
-                intakeOne.setPower(0);
+//                intakeOne.setPower(0);
                 intakeTwo.setPower(0);
-                transfer.setPower(0);
+//                transfer.setPower(0);
             }
 
             if (gamepad1.right_bumper){
                 intakeOne.setPower(1);
-                intakeTwo.setPower(1);
+//                intakeTwo.setPower(1);
 //                transfer.setPower(1);
             } else {
                 intakeOne.setPower(0);
                 intakeTwo.setPower(0);
-                transfer.setPower(0);
+//                transfer.setPower(0);
             }
 
             if (gamepad1.right_trigger > 0.3){

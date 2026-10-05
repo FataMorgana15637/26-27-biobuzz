@@ -27,7 +27,8 @@ public class TalaOpTest extends FataOpMode {
 
     protected void onPlay() {
         super.onPlay();
-//        button(() -> gamepad1.right_bumper).whenPressed(() -> IntakeActions.setPower(1)).create().schedule();
+
+//        button(() -> gamepad1.right_bumper)
     }
 //
     protected void onLoop() {

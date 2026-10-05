@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake;
 
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake.IntakeConstents.servoDebug;
+import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake.IntakeConstents.transferSpeed;
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.intake.IntakeState.*;
 import static org.firstinspires.ftc.teamcode.fataopmode.impl.robot.yuri.YuriConstents.hoodDebug;
 import static utility.actionBase.actions.Actions.simply;
@@ -18,7 +19,6 @@ import utility.actionBase.Action;
 
 public class IntakeSubsystem extends Subsystem {
     private MotorEx intakeMotorTop;
-    private MotorEx intakeMotorBottom;
     private MotorGroup intakeMotors;
     private MotorEx transferMotor;
     private ServoEx intakeServo;
@@ -27,7 +27,6 @@ public class IntakeSubsystem extends Subsystem {
     private DigitalChannel outtakeBeamTop;
     private DigitalChannel outtakeBeamBottom;
     private Supplier<Double> intakePower = () -> 0.0;
-    private Supplier<Double> transferPower = () -> 0.0;
     private IntakeServoPose intakePose = IntakeServoPose.INIT;
     private int ballCount = 0;
     private Supplier<Boolean> intakeBeamState = () -> false;
@@ -43,11 +42,9 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void hardwareInit() {
-        intakeMotorTop = getDcMotorEx("firstIntake");
-        intakeMotorBottom = getDcMotorEx("secIntake");
-        intakeMotors = getMotorGroup(intakeMotorTop, intakeMotorBottom);
-
+        intakeMotorTop = getDcMotorEx("intake");
         transferMotor = getDcMotorEx("transfer");
+
 
 //        intakeServo = getServo("intake");
 
@@ -57,7 +54,7 @@ public class IntakeSubsystem extends Subsystem {
         outtakeBeamTop = getDigitalChannel("outtakeBeamBack", false);
 
         intakeMotorTop.setInverted(true);
-        intakeMotorBottom.setInverted(false);
+        transferMotor.setInverted(false);
     }
 
     @Override
@@ -73,7 +70,6 @@ public class IntakeSubsystem extends Subsystem {
     @Override
     public void loop() {
         intakeUpdate().schedule();
-        transferUpdate().schedule();
 //        servoUpdate().schedule();
         beamUpdate().schedule();
         ballUpdate().schedule();
@@ -88,17 +84,15 @@ public class IntakeSubsystem extends Subsystem {
         intakePower = power;
     }
 
-    public void setTransferPower(Supplier<Double> power) {
-        transferPower = power;
+    public void setTransfer(Supplier<Double> power){
+        transferSpeed = power;
     }
+
 
     public double getIntakePower() {
         return intakePower.get();
     }
 
-    public double getTransferPower() {
-        return transferPower.get();
-    }
 
     public void setIntakePose(IntakeServoPose intakePose){
         this.intakePose = intakePose;
@@ -116,10 +110,6 @@ public class IntakeSubsystem extends Subsystem {
 
     private Action intakeUpdate(){
         return simply(() -> intakeMotors.set(getIntakePower()));
-    }
-
-    private Action transferUpdate(){
-        return simply(() -> transferMotor.set(getTransferPower()));
     }
 
     private Action beamUpdate(){

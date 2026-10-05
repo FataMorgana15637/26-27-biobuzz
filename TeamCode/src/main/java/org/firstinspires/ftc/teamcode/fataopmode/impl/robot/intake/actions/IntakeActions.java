@@ -8,18 +8,19 @@ public class IntakeActions {
     public static Action setIntake(Supplier<Double> power){
         return new SetIntakeAction(power);
     }
-    public static Action setTransfer(Supplier<Double> power){
-        return new SetTransferAction(power);
-    }
+
     public static Action separateIntake(){
         return new SeparateIntakeAction();
     }
+
+    public static Action setTransfer(Supplier<Double> power){
+        return new
+    }
+
+
 
     public static Action constantIntake(){
         return new ConstantIntakeAction();
     }
 
-    public static Action intakeEx(){
-        return new TotalIntakeAction();
-    }
 }

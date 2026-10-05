@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 public enum HoodPose {
     HOOD_CLOSED(() -> YuriConstents.hoodClosed),
-    CALC(yuri().getCalcHoodAngle());
+    CALC(() -> yuri().getCalcHoodAngle());
 
     public Supplier<Double> pose;
 
