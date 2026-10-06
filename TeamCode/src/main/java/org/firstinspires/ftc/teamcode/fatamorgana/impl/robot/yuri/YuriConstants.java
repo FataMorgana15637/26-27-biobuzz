@@ -18,4 +18,8 @@ public class YuriConstants {
     public static double minBallVelocity;
     public static double maxBallVelocity;
     public static double passHeightDiff = -shooterHight;
+    public static double hiveHeight = 0.0;
+    public static double passHeight = 0.0;
+    public static double passLaunchAngle = 0.0;
+    public static double scoreLaunchAngle = 0.0;
 }

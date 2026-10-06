@@ -4,24 +4,24 @@ import com.pedropathing.math.Pose;
 
 public enum Hive {
 //    front is towards the garden pf each alliance
-    FRONT_RED(0,0,0,0,0),
-    FRONT_BLUE(0,0,0,0,0),
-    BACK_RED(0,0,0,0,0),
-    BACK_BLUE(0,0,0,0,0);
+    FRONT_RED(0,0,0,0),
+    FRONT_BLUE(0,0,0,0),
+    BACK_RED(0,0,0,0),
+    BACK_BLUE(0,0,0,0);
 
     private final double maxLeft;
     private final double maxRight;
     private final double targetLeft;
     private final double targetRight;
+    public static final double height = 0.0;
+    private static double y = 0;
 
-    private final double y;
 
-    Hive(double maxLeft, double maxRight, double targetLeft, double targetRight, double y){
+    Hive(double maxLeft, double maxRight, double targetLeft, double targetRight){
         this.maxLeft = maxLeft;
         this.maxRight = maxRight;
         this.targetLeft = targetLeft;
         this.targetRight = targetRight;
-        this.y = y;
     }
 
     public Pose getTarget(double x){

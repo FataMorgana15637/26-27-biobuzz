@@ -105,4 +105,8 @@ public class TurretSubsystem extends Subsystem {
     public void setTurretMode(TurretMode turretMode) {
         this.turretMode = turretMode;
     }
+
+    public TurretMode getTurretMode() {
+        return turretMode;
+    }
 }

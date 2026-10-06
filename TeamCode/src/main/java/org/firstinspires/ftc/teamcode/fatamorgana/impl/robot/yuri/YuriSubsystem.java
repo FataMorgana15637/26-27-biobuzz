@@ -14,6 +14,7 @@ import utility.actionbase.Action;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.drive.DriveSubsystem.drive;
 import static utility.actionbase.actions.Actions.simply;
 import static utility.actionbase.actions.Actions.waitUntil;
+import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretMode.*;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretSubsystem.turret;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.yuriactions.YuriActions.setHood;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriState.*;
@@ -112,67 +113,78 @@ public class YuriSubsystem extends Subsystem {
         return new Pose(x, y, turret().getTurretAngle());
     }
 
-    private double getHiveDist() {
+    private double getTargetDist() {
         Pose hivePose = getHiveTarget();
+        Pose passPose = getPassPose();
         Pose shooterPose = getShooterPose();
+        boolean pass = turret().getTurretMode() == PASS;
+        Pose targetPose = pass ? passPose : hivePose;
 
-        return Math.sqrt(Math.pow(hivePose.x() - shooterPose.x(), 2) +
-                Math.pow(hivePose.y() - shooterPose.x(), 2));
+        return Math.sqrt(Math.pow(targetPose.x() - shooterPose.x(), 2) +
+                Math.pow(targetPose.y() - shooterPose.y(), 2));
+    }
+
+    private Pose getPassPose() {
+        return drive().getPassTarget();
     }
 
     private Pose getHiveTarget() {
         return drive().getHive().getTarget(drive().x());
     }
 
-    private double getHiveHeight() {
-        double hiveHeight;
-        double x = getHiveTarget().x();
+//    private double getHiveHeight() {
+//        double hiveHeight;
+//        double x = getHiveTarget().x();
+//
+//        InterpLUT heightLUT;
+//        heightLUT = new InterpLUT();
+//
+//        heightLUT.add(0, 0); // TODO
+//        heightLUT.add(1, 0);
+//
+//        hiveHeight = heightLUT.get(x);
+//
+//        return hiveHeight;
+//    }
 
-        InterpLUT heightLUT;
-        heightLUT = new InterpLUT();
-
-        heightLUT.add(0, 0); // TODO
-        heightLUT.add(1, 0);
-
-        hiveHeight = heightLUT.get(x);
-
-        return hiveHeight;
-    }
-
-    private double getHiveTrajectoryAngle() {
-        double trajectory;
-        double x = getHiveTarget().x();
-
-        InterpLUT trajectoryLUT;
-        trajectoryLUT = new InterpLUT();
-
-        trajectoryLUT.add(0, 0); // TODO
-        trajectoryLUT.add(1, 0);
-
-        trajectory = trajectoryLUT.get(x);
-
-        return trajectory;
-    }
+//    private double getHiveTrajectoryAngle() {
+//        double trajectory;
+//        double x = getHiveTarget().x();
+//
+//        InterpLUT trajectoryLUT;
+//        trajectoryLUT = new InterpLUT();
+//
+//        trajectoryLUT.add(0, 0); // TODO
+//        trajectoryLUT.add(1, 0);
+//
+//        trajectory = trajectoryLUT.get(x);
+//
+//        return trajectory;
+//    }
 
 
-    private double calcScoreHoodAngle() {
-        double heightDiff = getHiveHeight() - shooterHight;
+    private double calcHoodAngle() {
+        boolean pass = turret().getTurretMode() == PASS;
+        double height = pass ? hiveHeight : passHeight;
+        double heightDiff =  - shooterHight;
 
-        return Math.atan(2 * heightDiff / getHiveDist() -
-                Math.tan(getHiveTrajectoryAngle())
+        return Math.atan(2 * heightDiff / getTargetDist() -
+                Math.tan(pass ? passLaunchAngle : scoreLaunchAngle)
         );
     }
 
     public double getCalcHoodAngle() {
-        return calcScoreHoodAngle();
+        return calcHoodAngle();
     }
 
     private double calcScoreBallVelocity() {
-        double highDiff = getHiveHeight() - shooterHight;
-        double hoodAngle = calcScoreHoodAngle();
+        boolean pass = turret().getTurretMode() == PASS;
+        double height = pass ? hiveHeight : passHeight;
+        double heightDiff =  - shooterHight;
+        double hoodAngle = calcHoodAngle();
 
-        return (Math.sqrt(g * getHiveDist() * getHiveDist() /
-                (2 * Math.pow(Math.cos(hoodAngle), 2)) * getHiveDist() * (Math.tan(hoodAngle) - highDiff)
+        return (Math.sqrt(g * getTargetDist() * getTargetDist() /
+                (2 * Math.pow(Math.cos(hoodAngle), 2)) * getTargetDist() * (Math.tan(hoodAngle) - heightDiff)
         ));
     }
 

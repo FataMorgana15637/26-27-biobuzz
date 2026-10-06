@@ -76,4 +76,8 @@ public class DriveSubsystem extends Subsystem {
 
         return null;
     }
+
+    public Pose getPassTarget() {
+        return null; //TODO
+    }
 }
