@@ -38,7 +38,7 @@ public class GamepadFactory {
         return this;
     }
 
-    public Action create() {
-        return new GamepadAction(whenPressed, whenHeld, whenReleased, isPressed);
+    public void create() {
+        new GamepadAction(whenPressed, whenHeld, whenReleased, isPressed).schedule();
     }
 }

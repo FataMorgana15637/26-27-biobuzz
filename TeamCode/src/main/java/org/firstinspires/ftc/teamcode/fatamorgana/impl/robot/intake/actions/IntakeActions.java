@@ -28,4 +28,8 @@ public class IntakeActions {
     public static Action autoIntake() {
         return new AutoIntakeAction();
     }
+
+    public static Action transfer(){
+        return new IntakeTransferAction();
+    }
 }

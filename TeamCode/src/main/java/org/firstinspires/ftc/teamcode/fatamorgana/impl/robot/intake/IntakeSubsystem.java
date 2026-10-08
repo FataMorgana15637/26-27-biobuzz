@@ -5,8 +5,8 @@ import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.Intak
 import static utility.actionbase.actions.Actions.simply;
 
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
-import com.seattlesolvers.solverslib.hardware.motors.MotorGroup;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 
 import org.firstinspires.ftc.teamcode.fatamorgana.api.robot.hardware.Subsystem;
@@ -14,8 +14,7 @@ import org.firstinspires.ftc.teamcode.fatamorgana.api.robot.hardware.Subsystem;
 import utility.actionbase.Action;
 
 public class IntakeSubsystem extends Subsystem {
-    private MotorEx intakeMotorTop;
-    private MotorGroup intakeMotors;
+    private MotorEx intakeMotor;
     private MotorEx transferMotor;
     private ServoEx intakeServo;
     private DigitalChannel intakeBeamFront;
@@ -37,7 +36,7 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void hardwareInit() {
-        intakeMotorTop = getDcMotorEx("intake");
+        intakeMotor = getDcMotorEx("intake");
         transferMotor = getDcMotorEx("transfer");
 
 //        intakeServo = getServo("intake");
@@ -47,7 +46,7 @@ public class IntakeSubsystem extends Subsystem {
         outtakeBeamBottom = getDigitalChannel("outtakeBeamBack", false);
         outtakeBeamTop = getDigitalChannel("outtakeBeamBack", false);
 
-        intakeMotorTop.setInverted(true);
+        intakeMotor.setInverted(true);
         transferMotor.setInverted(false);
     }
 
@@ -104,7 +103,7 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     private Action intakeUpdate() {
-        return simply(() -> intakeMotors.set(getIntakePower()));
+        return simply(() -> intakeMotor.set(getIntakePower()));
     }
 
     private Action beamUpdate() {
@@ -121,8 +120,8 @@ public class IntakeSubsystem extends Subsystem {
         }).after(10);
     }
 
-    public void empty() {
-        ballCount = 0;
+    public Action empty() {
+        return simply(() -> ballCount = 0);
     }
 
     public boolean isEmpty() {
@@ -139,5 +138,16 @@ public class IntakeSubsystem extends Subsystem {
 
     public IntakeState getIntakeState() {
         return intakeState;
+    }
+
+    public Action brakeTransfer() {
+        return simply(() ->
+                transferMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)
+        );
+    }
+    public Action floatTransfer() {
+        return simply(() ->
+                transferMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT)
+        );
     }
 }

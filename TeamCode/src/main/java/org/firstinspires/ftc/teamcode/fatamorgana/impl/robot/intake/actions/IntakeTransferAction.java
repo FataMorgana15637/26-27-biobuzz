@@ -2,19 +2,13 @@ package org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.actions;
 
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.IntakeConstants.intakeSpeed;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.IntakeConstants.transferSpeed;
-import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.IntakeSubsystem.intake;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.actions.IntakeActions.setIntake;
-import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.actions.IntakeActions.setIntakePose;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.actions.IntakeActions.setTransfer;
-
-import static utility.actionbase.actions.Actions.waitUntil;
-
-import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.IntakeServoPose;
 
 import utility.actionbase.runners.SequentialActionRunner;
 
-public class ConstantIntakeAction extends SequentialActionRunner {
-     ConstantIntakeAction() {
+public class IntakeTransferAction extends SequentialActionRunner {
+    IntakeTransferAction() {
         super(
                 setIntake(intakeSpeed),
 

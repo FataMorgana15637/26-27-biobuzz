@@ -4,6 +4,7 @@ import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
+import com.seattlesolvers.solverslib.hardware.motors.MotorGroup;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 import com.seattlesolvers.solverslib.util.InterpLUT;
 
@@ -16,6 +17,7 @@ import static utility.actionbase.actions.Actions.simply;
 import static utility.actionbase.actions.Actions.waitUntil;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretMode.*;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretSubsystem.turret;
+import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.StopperPose.STOP;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.yuriactions.YuriActions.setHood;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriState.*;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriConstants.*;
@@ -24,11 +26,16 @@ import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.HoodPos
 import java.util.function.Supplier;
 
 public class YuriSubsystem extends Subsystem {
-    private MotorEx yuriMotor;
+    private MotorEx yuriMotorOne;
+    private MotorEx yuriMotorTwo;
+    private MotorGroup yuriMotors;
     private ServoEx hood;
+    private ServoEx stopper;
     private double power = 0.0;
     private HoodPose hoodPose = HOOD_CLOSED;
+    private StopperPose stopperPose = STOP;
     private YuriState yuriState = SEPARATE;
+    private boolean shoot = true;
 
     private final static YuriSubsystem yuri = new YuriSubsystem();
     public static YuriSubsystem yuri() {
@@ -37,11 +44,14 @@ public class YuriSubsystem extends Subsystem {
 
     @Override
     public void hardwareInit() {
-        yuriMotor = getDcMotorEx("yuri");
+        yuriMotorOne = getDcMotorEx("yuri");
+        yuriMotorTwo = getDcMotorEx("yuriTwo");
+        yuriMotors = getMotorGroup(yuriMotors, yuriMotorTwo);
         hood = getServo("hood", 10, 20);
-        yuriMotor.setInverted(false);
-        yuriMotor.setRunMode(Motor.RunMode.RawPower);
-        yuriMotor.stopAndResetEncoder();
+        stopper = getServo("stopper");
+        yuriMotorOne.setInverted(false);
+        yuriMotorOne.setRunMode(Motor.RunMode.RawPower);
+        yuriMotorOne.stopAndResetEncoder();
     }
 
     @Override
@@ -56,8 +66,11 @@ public class YuriSubsystem extends Subsystem {
 
     @Override
     public void loop() {
-        scoreCalc().schedule();
-//        hoodUpdate().schedule();
+        if (shoot) {
+            scoreCalc().schedule();
+            hoodUpdate().schedule();
+        }
+        stopperUpdate().schedule();
     }
 
     @Override
@@ -77,31 +90,44 @@ public class YuriSubsystem extends Subsystem {
         return hoodPose;
     }
 
+    public void setStopperPose(StopperPose stopperPose) {
+        this.stopperPose = stopperPose;
+    }
+
+    public StopperPose getStopperPose() {
+        return stopperPose;
+    }
+
     private Action hoodUpdate() {
         return simply(() -> hood.set(hoodDebug == -1 ?
                 hoodPose.pose.get() : hoodDebug));
     }
 
+    private Action stopperUpdate() {
+        return simply(() -> stopper.set(stopperDebug == -1 ?
+                stopperPose.get() : stopperDebug));
+    }
+
     private Action bang(Supplier<Double> target) {
         return simply(() -> {
-            if (yuriMotor.getCurrentPosition() < target.get()) {
-                yuriMotor.set(maxBangConstants);
-            } else yuriMotor.set(-maxBangConstants);
+            if (yuriMotors.getCurrentPosition() < target.get()) {
+                yuriMotors.set(maxBangConstants);
+            } else yuriMotors.set(-maxBangConstants);
         });
     }
 
     private Action pf(Supplier<Double> target) {
         return simply(() -> {
-            double error = Math.abs(yuriMotor.getCurrentPosition() - target.get());
-            yuriMotor.set(f * yuriMotor.getVelocity() *
-                    (yuriMotor.getCurrentPosition() < target.get() ? 1 : -1)
+            double error = Math.abs(yuriMotors.getCurrentPosition() - target.get());
+            yuriMotors.set(f * yuriMotors.getVelocity() *
+                    (yuriMotors.getCurrentPosition() < target.get() ? 1 : -1)
                     + p * error);
         });
     }
 
     private Action bangBangController(Supplier<Double> ofeksMom) {
         return bang(ofeksMom).then(
-                        waitUntil(() -> yuriMotor.getVelocity() == ofeksMom.get()))
+                        waitUntil(() -> yuriMotors.getVelocity() == ofeksMom.get()))
                 .then(pf(ofeksMom));
     }
 
@@ -166,7 +192,7 @@ public class YuriSubsystem extends Subsystem {
     private double calcHoodAngle() {
         boolean pass = turret().getTurretMode() == PASS;
         double height = pass ? hiveHeight : passHeight;
-        double heightDiff =  - shooterHight;
+        double heightDiff =  -shooterHeight;
 
         return Math.atan(2 * heightDiff / getTargetDist() -
                 Math.tan(pass ? passLaunchAngle : scoreLaunchAngle)
@@ -180,7 +206,7 @@ public class YuriSubsystem extends Subsystem {
     private double calcScoreBallVelocity() {
         boolean pass = turret().getTurretMode() == PASS;
         double height = pass ? hiveHeight : passHeight;
-        double heightDiff =  - shooterHight;
+        double heightDiff =  -shooterHeight;
         double hoodAngle = calcHoodAngle();
 
         return (Math.sqrt(g * getTargetDist() * getTargetDist() /
@@ -213,5 +239,13 @@ public class YuriSubsystem extends Subsystem {
 
     public YuriState getYuriState() {
         return yuriState;
+    }
+
+    public void setShoot(boolean shoot) {
+        this.shoot = shoot;
+    }
+
+    public boolean isShooting() {
+        return shoot;
     }
 }

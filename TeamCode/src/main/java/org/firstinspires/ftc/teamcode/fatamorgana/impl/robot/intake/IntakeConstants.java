@@ -15,4 +15,5 @@ public class IntakeConstants {
     public static double servoIntake = 0.0;
     public static double servoUp = 0.0;
     public static int servoDebug = -1;
+    public static double holdSpeed = 0.4;
 }

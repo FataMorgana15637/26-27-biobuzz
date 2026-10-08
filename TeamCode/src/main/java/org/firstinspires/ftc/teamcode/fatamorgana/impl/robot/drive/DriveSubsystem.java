@@ -80,4 +80,12 @@ public class DriveSubsystem extends Subsystem {
     public Pose getPassTarget() {
         return null; //TODO
     }
+
+    public void setPose(Pose pose){
+        follower.setPose(pose);
+    }
+
+    public void resetHeading(double heading){
+        follower.setHeading(heading);
+    }
 }
