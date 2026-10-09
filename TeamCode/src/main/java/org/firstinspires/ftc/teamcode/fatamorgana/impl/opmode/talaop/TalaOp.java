@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.actions.Robo
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.drive.DriveSubsystem.drive;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretMode.*;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretSubsystem.turret;
-import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.turretactions.TurretActions.*;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriState.*;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriSubsystem.yuri;
 
@@ -53,15 +52,16 @@ public class TalaOp extends FataOpMode {
 
         button(() -> gamepad1.right_trigger > 0.3).whenPressed(() ->
                         separateIntake()
-                );
+        );
 
         button(() -> gamepad1.triangle).whenPressed(() ->
             yuri().setYuriState(CONTINUOUS)
                     .also(constantTransfer())
-        );
+        ).create();
+
         button(() -> gamepad1.circle).whenPressed(() ->
                 yuri().setYuriState(SEPARATE)
-                );
+        ).create();
     }
     @Override
     protected void onLoop() {
