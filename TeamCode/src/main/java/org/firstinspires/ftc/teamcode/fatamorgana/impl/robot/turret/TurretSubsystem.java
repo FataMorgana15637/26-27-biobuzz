@@ -102,8 +102,8 @@ public class TurretSubsystem extends Subsystem {
         return simply(() -> {});
     }
 
-    public void setTurretMode(TurretMode turretMode) {
-        this.turretMode = turretMode;
+    public Action setTurretMode(TurretMode turretMode) {
+        return simply(() -> this.turretMode = turretMode);
     }
 
     public TurretMode getTurretMode() {

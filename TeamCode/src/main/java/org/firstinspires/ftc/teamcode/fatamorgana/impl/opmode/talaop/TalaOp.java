@@ -4,20 +4,18 @@ import static org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.gamepad.Game
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.actions.RobotActions.*;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.drive.DriveSubsystem.drive;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretMode.*;
+import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretSubsystem.turret;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.turretactions.TurretActions.*;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriState.*;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriSubsystem.yuri;
-import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.yuriactions.YuriActions.*;
+
+import static utility.actionbase.Action.empty;
+import static utility.actionbase.actions.Actions.observe;
 
 import com.pedropathing.math.Pose;
 
 import org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.FataOpMode;
 import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.actions.RobotActions;
-import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.actions.SeparateIntakeAction;
-import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretMode;
-import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.turretactions.TurretActions;
-import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriState;
-import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.yuriactions.YuriActions;
 
 public class TalaOp extends FataOpMode {
     @Override
@@ -31,17 +29,38 @@ public class TalaOp extends FataOpMode {
     @Override
     protected void onPlay() {
         button(() -> gamepad1.right_bumper).whenPressed(() ->
-                        setTurretMode(SCORE)
-                                .also(separateTransfer())
+                turret().setTurretMode(SCORE)
+                                .also(observe(
+                                        () -> yuri().getYuriState() == SEPARATE,
+                                        () -> separateTransfer(),
+                                        () -> empty()
+                                ))
         ).create();
 
         button(() -> gamepad1.left_bumper).whenPressed(() ->
-                    setTurretMode(PASS)
-                            .also(separateTransfer())
-        ).create();
+                turret().setTurretMode(PASS)
+                        .also(observe(
+                                () -> yuri().getYuriState() == SEPARATE,
+                                () -> separateTransfer(),
+                                () -> empty()
+                        ))
+        ).whenReleased(() ->
+                observe(
+                        () -> yuri().getYuriState() == SEPARATE,
+                        () -> empty(),
+                        () -> turret().setTurretMode(SCORE)
+                )).create();
 
         button(() -> gamepad1.right_trigger > 0.3).whenPressed(() ->
                         separateIntake()
+                );
+
+        button(() -> gamepad1.triangle).whenPressed(() ->
+            yuri().setYuriState(CONTINUOUS)
+                    .also(constantTransfer())
+        );
+        button(() -> gamepad1.circle).whenPressed(() ->
+                yuri().setYuriState(SEPARATE)
                 );
     }
     @Override

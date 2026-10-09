@@ -233,8 +233,8 @@ public class YuriSubsystem extends Subsystem {
         ).also(setHood(CALC));
     }
 
-    public void setYuriState(YuriState yuriState) {
-        this.yuriState = yuriState;
+    public Action setYuriState(YuriState yuriState) {
+        return simply(() -> this.yuriState = yuriState);
     }
 
     public YuriState getYuriState() {
