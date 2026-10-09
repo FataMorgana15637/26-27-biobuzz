@@ -21,10 +21,12 @@ public class TalaOp extends FataOpMode {
     protected void onInit() {
         drive().setPose(new Pose(144, 72, 180));
     }
+
     @Override
     protected void initLoop() {
 
     }
+
     @Override
     protected void onPlay() {
         button(() -> gamepad1.right_bumper).whenPressed(() ->
@@ -63,10 +65,12 @@ public class TalaOp extends FataOpMode {
                 yuri().setYuriState(SEPARATE)
         ).create();
     }
+
     @Override
     protected void onLoop() {
 
     }
+
     @Override
     protected void onStop() {
 
