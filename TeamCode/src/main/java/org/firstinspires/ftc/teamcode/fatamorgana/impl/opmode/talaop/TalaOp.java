@@ -45,16 +45,15 @@ public class TalaOp extends FataOpMode {
                                 () -> separateTransfer(),
                                 () -> empty()
                         ))
-        ).whenReleased(() ->
-                observe(
-                        () -> yuri().getYuriState() == SEPARATE,
-                        () -> empty(),
-                        () -> turret().setTurretMode(SCORE)
-                )).create();
+        ).whenReleased(() -> observe(
+                () -> yuri().getYuriState() == SEPARATE,
+                () -> empty(),
+                () -> turret().setTurretMode(SCORE)
+        )).create();
 
         button(() -> gamepad1.right_trigger > 0.3).whenPressed(() ->
                         separateIntake()
-        );
+        ).create();
 
         button(() -> gamepad1.triangle).whenPressed(() ->
             yuri().setYuriState(CONTINUOUS)
@@ -68,7 +67,11 @@ public class TalaOp extends FataOpMode {
 
     @Override
     protected void onLoop() {
-
+        drive().TeleOpDrive(
+                -gamepad1.left_stick_y,
+                -gamepad1.left_stick_x,
+                -gamepad1.right_stick_x
+        );
     }
 
     @Override
