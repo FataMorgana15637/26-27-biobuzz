@@ -20,11 +20,11 @@ public class UriBot extends LinearOpMode {
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("fr");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("br");
         DcMotor intakeOne = hardwareMap.dcMotor.get("firstIntake");
-        DcMotor intakeTwo = hardwareMap.dcMotor.get("secIntake");
-//        DcMotor transfer = hardwareMap.dcMotor.get("transfer");
+        DcMotor transfer = hardwareMap.dcMotor.get("transfer");
         DcMotor shooter = hardwareMap.dcMotor.get("yuri");
+        DcMotor shooterTwo = hardwareMap.dcMotor.get("yuriTwo");
 
-        intakeTwo.setDirection(DcMotorSimple.Direction.REVERSE);
+        transfer.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeOne.setDirection(DcMotorSimple.Direction.REVERSE);
 
 //         Reverse the right side motors. This may be wrong for your setup.
@@ -41,11 +41,12 @@ public class UriBot extends LinearOpMode {
         while (opModeIsActive()) {
             if (gamepad1.left_bumper) {
                 intakeOne.setPower(1);
-                intakeTwo.setPower(1);
+                transfer.setPower(1);
 //            transfer.setPower(1);
-            } else {
-//                intakeOne.setPower(0);
-                intakeTwo.setPower(0);
+            } if(!gamepad1.left_bumper && !gamepad1.right_bumper) {
+                intakeOne.setPower(0);
+                transfer.setPower(0);
+//                transfer.setPower(0);
 //                transfer.setPower(0);
             }
 
@@ -55,14 +56,16 @@ public class UriBot extends LinearOpMode {
 //                transfer.setPower(1);
             } else {
                 intakeOne.setPower(0);
-                intakeTwo.setPower(0);
+                transfer.setPower(0);
 //                transfer.setPower(0);
             }
 
             if (gamepad1.right_trigger > 0.3) {
                 shooter.setPower(shooterVel);
+                shooterTwo.setPower(shooterVel);
             } else {
                 shooter.setPower(0);
+                shooterTwo.setPower(0);
             }
 
             if (gamepad1.dpad_up) {
