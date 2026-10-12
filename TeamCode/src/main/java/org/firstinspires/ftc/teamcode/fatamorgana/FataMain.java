@@ -62,7 +62,7 @@ public class FataMain {
     }
 
     public static void initLoop() {
-        PanelsTelemetry.INSTANCE.getTelemetry().update(currentOpMode.telemetry);
+//        PanelsTelemetry.INSTANCE.getTelemetry().update(currentOpMode.telemetry);
     }
 
     public static void play() {

@@ -5,10 +5,13 @@ import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.Intak
 import static utility.actionbase.actions.Actions.simply;
 
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 
+import org.firstinspires.ftc.teamcode.fatamorgana.FataMain;
+import org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.FataOpMode;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.robot.hardware.Subsystem;
 
 import utility.actionbase.Action;
@@ -25,8 +28,10 @@ public class IntakeSubsystem extends Subsystem {
     private IntakeServoPose intakePose = IntakeServoPose.INIT;
     private int ballCount = 0;
     private boolean intakeBeamState = false, outtakeBeamState = false;
+    private boolean lastResult = false;
     private boolean wasLastDetected = false;
     private IntakeState intakeState = Separate;
+    private final ElapsedTime elapsedTime = new ElapsedTime();
 
     private static final IntakeSubsystem intake = new IntakeSubsystem();
 
@@ -41,13 +46,13 @@ public class IntakeSubsystem extends Subsystem {
 
 //        intakeServo = getServo("intake");
 
-        intakeBeamFront = getDigitalChannel("intakeBeamFront", false);
-        intakeBeamBack = getDigitalChannel("intakeBeamBack", false);
+        intakeBeamFront = getDigitalChannel("intakeBeamFront");
+        intakeBeamBack = getDigitalChannel("intakeBeamBack");
         outtakeBeamBottom = getDigitalChannel("outtakeBeamBack", false);
         outtakeBeamTop = getDigitalChannel("outtakeBeamBack", false);
 
         intakeMotor.setInverted(true);
-        transferMotor.setInverted(false);
+        transferMotor.setInverted(true);
     }
 
     @Override
@@ -65,7 +70,7 @@ public class IntakeSubsystem extends Subsystem {
         intakeUpdate().schedule();
 //        servoUpdate().schedule();
         beamUpdate().schedule();
-        ballUpdate().schedule();
+        telemtryUpdate().schedule();
     }
 
     @Override
@@ -103,29 +108,34 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     private Action intakeUpdate() {
-        return simply(() -> intakeMotor.set(getIntakePower()));
+        return simply(() -> {
+            intakeMotor.set(getIntakePower());
+            transferMotor.set(getTransferPower());
+        });
     }
 
     private Action beamUpdate() {
         return simply(() -> {
-            intakeBeamState = intakeBeamFront.getState() || intakeBeamBack.getState();
-            outtakeBeamState = outtakeBeamTop.getState() || outtakeBeamBottom.getState();
+            intakeBeamState = !intakeBeamFront.getState() || !intakeBeamBack.getState();
+            if (intakeBeamState){
+                if (elapsedTime.milliseconds() <= IntakeConstants.waitTime) {
+                    intakeBeamState = false;
+                    return;
+                };
+
+                if (!lastResult && intakeBeamState && ballCount < 4){
+                    ballCount ++;
+                }
+                elapsedTime.reset();
+            }
         });
     }
-
-    private Action ballUpdate() {
-        return simply(() -> {
-            if (intakeBeamState && ballCount <= 4)
-                ballCount++;
-        }).after(10);
-    }
-
     public Action empty() {
         return simply(() -> ballCount = 0);
     }
 
     public boolean isEmpty() {
-        return ballCount == 0 && !outtakeBeamState;
+        return ballCount == 0;
     }
 
     public boolean isFull() {
@@ -149,5 +159,14 @@ public class IntakeSubsystem extends Subsystem {
         return simply(() ->
                 transferMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT)
         );
+    }
+
+    private Action telemtryUpdate(){
+        return simply(() -> {
+            FataMain.getTelemetry().addData("intakeTarget", intakePower);
+            FataMain.getTelemetry().addData("beamFrontState", !intakeBeamFront.getState());
+            FataMain.getTelemetry().addData("beamBackState", !intakeBeamBack.getState());
+            FataMain.getTelemetry().addData("ball count", ballCount);
+        });
     }
 }

@@ -23,7 +23,7 @@ public class SeparateIntakeAction extends SequentialActionRunner {
                                 .also(setTransfer(stopSpeed))
                 ),
 
-                setIntake(holdSpeed)
+                setIntake(stopSpeed)
                         .also(intake().brakeTransfer())
                         .also(setIntakePose(UP))
         );

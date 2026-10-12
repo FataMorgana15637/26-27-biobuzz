@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.actio
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.StopperPose.*;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.yuriactions.YuriActions.*;
 
+import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.actions.IntakeActions;
+
 import utility.actionbase.runners.SequentialActionRunner;
 
 public class SeparateTransferAction extends SequentialActionRunner {
@@ -14,7 +16,9 @@ public class SeparateTransferAction extends SequentialActionRunner {
 
                 transfer(),
 
-                intake().empty()
+                intake().empty(),
+
+                IntakeActions.stop().after(1000)
         );
     }
 }

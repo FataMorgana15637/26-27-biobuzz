@@ -48,7 +48,7 @@ public class YuriSubsystem extends Subsystem {
         yuriMotorTwo = getDcMotorEx("yuriTwo");
         yuriMotors = getMotorGroup(yuriMotors, yuriMotorTwo);
         hood = getServo("hood", 10, 20);
-        stopper = getServo("stopper");
+//        stopper = getServo("stopper");
         yuriMotorOne.setInverted(false);
         yuriMotorOne.setRunMode(Motor.RunMode.RawPower);
         yuriMotorOne.stopAndResetEncoder();
@@ -70,7 +70,7 @@ public class YuriSubsystem extends Subsystem {
             scoreCalc().schedule();
             hoodUpdate().schedule();
         }
-        stopperUpdate().schedule();
+//        stopperUpdate().schedule();
     }
 
     @Override
@@ -206,7 +206,7 @@ public class YuriSubsystem extends Subsystem {
     private double calcScoreBallVelocity() {
         boolean pass = turret().getTurretMode() == PASS;
         double height = pass ? hiveHeight : passHeight;
-        double heightDiff =  -shooterHeight;
+        double heightDiff = height - shooterHeight;
         double hoodAngle = calcHoodAngle();
 
         return (Math.sqrt(g * getTargetDist() * getTargetDist() /

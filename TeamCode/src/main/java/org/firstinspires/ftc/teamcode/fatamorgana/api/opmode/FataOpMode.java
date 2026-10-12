@@ -44,6 +44,7 @@ public class FataOpMode extends LinearOpMode {
             FataMain.loop();
             onLoop();
             FataMain.getTelemetry().update();
+
         }
 
         // STOP

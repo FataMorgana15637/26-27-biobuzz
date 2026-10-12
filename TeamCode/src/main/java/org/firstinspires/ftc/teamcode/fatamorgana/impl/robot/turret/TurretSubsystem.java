@@ -11,6 +11,7 @@ import com.pedropathing.math.Pose;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 import com.seattlesolvers.solverslib.hardware.servos.ServoExGroup;
 
+import org.firstinspires.ftc.teamcode.fatamorgana.FataMain;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.robot.hardware.Subsystem;
 
 import java.util.function.Supplier;
@@ -34,8 +35,8 @@ public class TurretSubsystem extends Subsystem {
 
     @Override
     public void hardwareInit() {
-        servoR = getServo("servoR", 0.0, 360.0);
-        servoL = getServo("servoL", 0.0, 360.0);
+        servoR = getServo("servoR");
+        servoL = getServo("servoL");
 
         turretServos = getServoGroup(servoR, servoL);
     }
@@ -54,13 +55,19 @@ public class TurretSubsystem extends Subsystem {
     public void loop() {
         if (turretMode == SCORE) aimToGoal().schedule();
         if (turretMode == PASS) pass().schedule();
+        servoUpdate().schedule();
+        telemetryUpdate().schedule();
     }
 
     @Override
     public void stop() {
 
     }
-
+    private Action servoUpdate(){
+        return simply(() ->
+                turretServos.set(/*debug == -1? (target.get()/(360)) : debug*/ 0)
+        );
+    }
     public double getTurretAngle() {
         return turretServos.get();
     }
@@ -108,5 +115,14 @@ public class TurretSubsystem extends Subsystem {
 
     public TurretMode getTurretMode() {
         return turretMode;
+    }
+
+    private Action telemetryUpdate(){
+        return simply(() -> {
+            FataMain.getTelemetry().addData("target", target.get());
+            FataMain.getTelemetry().addData("target to servo", target.get()/360);
+            FataMain.getTelemetry().addData("actual target", debug == -1? (target.get()/(360)) : debug);
+            FataMain.getTelemetry().addData("debug", debug);
+        });
     }
 }

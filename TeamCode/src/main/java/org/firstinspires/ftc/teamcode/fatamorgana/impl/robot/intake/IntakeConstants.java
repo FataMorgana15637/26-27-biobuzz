@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Configurable
 public class IntakeConstants {
@@ -16,4 +17,5 @@ public class IntakeConstants {
     public static double servoUp = 0.0;
     public static int servoDebug = -1;
     public static double holdSpeed = 0.4;
+    public static int waitTime = 100;
 }

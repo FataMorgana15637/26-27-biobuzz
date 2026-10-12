@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.fatamorgana.api.robot;
 
 import org.firstinspires.ftc.teamcode.fatamorgana.api.robot.hardware.Subsystem;
 import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.drive.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.flower.FlowerSubsystem;
 import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretSubsystem;
 import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriSubsystem;
@@ -10,8 +11,9 @@ public class FataRobot {
     private final Subsystem[] subsystems = {
            IntakeSubsystem.intake(),
             DriveSubsystem.drive(),
-            YuriSubsystem.yuri(),
-            TurretSubsystem.turret()
+            YuriSubsystem.yuri().disable(),
+            TurretSubsystem.turret(),
+            FlowerSubsystem.flower()
     };
 
     public void init() {
