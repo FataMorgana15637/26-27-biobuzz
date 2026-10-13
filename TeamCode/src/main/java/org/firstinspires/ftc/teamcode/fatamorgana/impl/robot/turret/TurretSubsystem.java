@@ -35,8 +35,8 @@ public class TurretSubsystem extends Subsystem {
 
     @Override
     public void hardwareInit() {
-        servoR = getServo("servoR");
-        servoL = getServo("servoL");
+        servoR = getServo("servoR", 0, 360);
+        servoL = getServo("servoL",0, 360);
 
         turretServos = getServoGroup(servoR, servoL);
     }
@@ -65,7 +65,7 @@ public class TurretSubsystem extends Subsystem {
     }
     private Action servoUpdate(){
         return simply(() ->
-                turretServos.set(/*debug == -1? (target.get()/(360)) : debug*/ 0)
+                turretServos.set(debug == -1? target.get() : debug)
         );
     }
     public double getTurretAngle() {
@@ -120,8 +120,8 @@ public class TurretSubsystem extends Subsystem {
     private Action telemetryUpdate(){
         return simply(() -> {
             FataMain.getTelemetry().addData("target", target.get());
-            FataMain.getTelemetry().addData("target to servo", target.get()/360);
-            FataMain.getTelemetry().addData("actual target", debug == -1? (target.get()/(360)) : debug);
+            FataMain.getTelemetry().addData("target to servo", target.get());
+            FataMain.getTelemetry().addData("actual target", debug == -1 ? target.get()  : debug);
             FataMain.getTelemetry().addData("debug", debug);
         });
     }
