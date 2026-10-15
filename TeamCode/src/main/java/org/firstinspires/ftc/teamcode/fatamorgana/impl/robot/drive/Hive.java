@@ -8,10 +8,38 @@ import org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.AllianceColour;
 
 public enum Hive {
 //    front is towards the garden of each alliance
-    FRONT_RED(10.3937,144-10.3937,74.75+3-24,94.75-3-24, 63.846-3, RED,34, true),
-    FRONT_BLUE(0,0,0,0, BLUE, 42,false),
-    BACK_RED(0,0,0,0, RED, 30,false),
-    BACK_BLUE(10.3937,144-10.3937,74.75+3,94.75-3,63.846-3, BLUE, 38,true);
+    FRONT_RED(144-10.3937,
+        10.3937,
+        144 - 94.75-3-24,
+        144 - 74.75+3-24,
+        63.846-3,
+        RED,
+        34,
+        true),
+    FRONT_BLUE(10.3937,
+            144-10.3937,
+            74.75+3,
+            94.75-3,
+            144-63.846-3,
+            BLUE,
+            42,
+            false),
+    BACK_RED(144-10.3937,
+            10.3937,
+            144 - 94.75-3-24,
+            144 - 74.75+3-24,
+            144-63.846-3,
+            RED,
+            30,
+            false),
+    BACK_BLUE(10.3937,
+            144-10.3937,
+            74.75+3,
+            94.75-3,
+            63.846-3,
+            BLUE,
+            38,
+            true);
 
     private final double maxLeft;
     private final double maxRight;
