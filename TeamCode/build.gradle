@@ -60,4 +60,7 @@ dependencies {
 
     // Panels Dashboard
     implementation "com.bylazar:fullpanels:1.0.18"
+
+    //Marrow
+    implementation 'com.skeletonarmyftc.marrow:core:1.2.1'
 }

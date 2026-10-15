@@ -4,6 +4,9 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.ManualDrive;
 import com.pedropathing.drivetrain.DrivePowers;
 import com.pedropathing.math.Pose;
+import com.skeletonarmy.marrow.zones.Point;
+import com.skeletonarmy.marrow.zones.PolygonZone;
+
 import org.firstinspires.ftc.teamcode.fatamorgana.FataMain;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.AllianceColour;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.robot.hardware.Subsystem;
@@ -18,6 +21,29 @@ public class DriveSubsystem extends Subsystem {
 
     public static Follower follower;
     private Pose currentPose;
+
+    private final PolygonZone audienceLaunchZone = new PolygonZone(
+            new Point(24, 48),
+            new Point(24, 24),
+            new Point(0,24),
+            new Point(0,0),
+            new Point(144,0),
+            new Point(144-24, 24),
+            new Point(144-24, 48),
+            new Point(144, 0)
+    );
+    private final PolygonZone scoringLaunchZone = new PolygonZone(
+            new Point(24, 144 - 48),
+            new Point(24, 144 - 24),
+            new Point(0,144 - 24),
+            new Point(0,144),
+            new Point(144,144),
+            new Point(144-24, 144 - 24),
+            new Point(144-24, 144 - 48),
+            new Point(144, 144)
+    );
+
+    private final PolygonZone robotZone = new PolygonZone(10.3937, 14);
 
     @Override
     public void hardwareInit() {
@@ -38,7 +64,8 @@ public class DriveSubsystem extends Subsystem {
     public void loop() {
         follower.update();
         currentPose = follower.pose();
-
+        robotZone.setPosition(x(), y());
+        robotZone.setRotation(getHeading());
     }
 
     @Override
@@ -77,6 +104,10 @@ public class DriveSubsystem extends Subsystem {
         return null;
     }
 
+    public boolean canSeeHive(){
+        return robotZone.isFullyInside(audienceLaunchZone) ||
+                robotZone.isFullyInside(scoringLaunchZone);
+    }
     public Pose getPassTarget() {
         return null; //TODO
     }

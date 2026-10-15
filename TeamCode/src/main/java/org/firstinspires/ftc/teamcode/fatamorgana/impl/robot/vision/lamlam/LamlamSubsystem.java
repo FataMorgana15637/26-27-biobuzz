@@ -6,6 +6,7 @@ import static utility.actionbase.actions.Actions.simply;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.fatamorgana.FataMain;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.AllianceColour;
@@ -16,13 +17,12 @@ import utility.actionbase.Action;
 
 public class LamlamSubsystem extends Subsystem {
     private static final LamlamSubsystem lamlam = new LamlamSubsystem();
-
     public static LamlamSubsystem lamlam(){
         return lamlam;
     }
-
-    private boolean isValid = false;
     private Limelight3A lamlamCam;
+    private boolean isValid = false;
+    private final ElapsedTime elapsedTime = new ElapsedTime();
     private int pipeline = 0;
     @Override
     public void hardwareInit() {
@@ -52,7 +52,7 @@ public class LamlamSubsystem extends Subsystem {
     public void loop() {
         LLResult llResult = lamlamCam.getLatestResult();
         isValid = llResult != null && llResult.isValid();
-
+        hiveUpdate(llResult, isValid).schedule();
     }
 
     @Override
@@ -63,10 +63,12 @@ public class LamlamSubsystem extends Subsystem {
     private Action hiveUpdate(LLResult llResult, boolean isValid) {
         return simply(() -> {
             Hive hive = drive().getHive();
-            if (isValid) {
+            if (drive().canSeeHive() && isValid) {
                 double aprilTag = llResult.getFiducialResults().get(0).getFiducialId();
                 hive.isUp = (aprilTag <= hive.maxApril && aprilTag >= hive.minApril);
             }else hive.isUp = false;
+            Hive.BACK_RED.isUp = !Hive.FRONT_RED.isUp;
+            Hive.BACK_BLUE.isUp = !Hive.FRONT_BLUE.isUp;
         });
     }
 }

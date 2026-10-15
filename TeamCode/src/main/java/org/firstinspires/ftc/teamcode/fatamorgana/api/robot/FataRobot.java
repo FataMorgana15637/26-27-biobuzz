@@ -5,6 +5,8 @@ import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.drive.DriveSubsyste
 import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.flower.FlowerSubsystem;
 import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretSubsystem;
+import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.vision.arducam.ArducamSubsystem;
+import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.vision.lamlam.LamlamSubsystem;
 import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriSubsystem;
 
 public class FataRobot {
