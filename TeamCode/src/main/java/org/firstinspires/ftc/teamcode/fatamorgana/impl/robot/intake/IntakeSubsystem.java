@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake;
 
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.IntakeConstants.servoDebug;
-import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.intake.IntakeState.*;
 import static utility.actionbase.actions.Actions.simply;
 
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -11,7 +10,6 @@ import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 
 import org.firstinspires.ftc.teamcode.fatamorgana.FataMain;
-import org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.FataOpMode;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.robot.hardware.Subsystem;
 
 import utility.actionbase.Action;
@@ -30,7 +28,6 @@ public class IntakeSubsystem extends Subsystem {
     private boolean intakeBeamState = false, outtakeBeamState = false;
     private boolean lastResult = false;
     private boolean wasLastDetected = false;
-    private IntakeState intakeState = Separate;
     private final ElapsedTime elapsedTime = new ElapsedTime();
 
     private static final IntakeSubsystem intake = new IntakeSubsystem();
@@ -144,10 +141,6 @@ public class IntakeSubsystem extends Subsystem {
 
     public int getBallCount() {
         return ballCount;
-    }
-
-    public IntakeState getIntakeState() {
-        return intakeState;
     }
 
     public Action brakeTransfer() {
