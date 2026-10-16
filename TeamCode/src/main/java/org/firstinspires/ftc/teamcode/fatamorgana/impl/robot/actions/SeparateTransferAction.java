@@ -18,7 +18,7 @@ public class SeparateTransferAction extends SequentialActionRunner {
 
                 intake().empty(),
 
-                IntakeActions.stop().after(500)
+                IntakeActions.stop().after(2000)
         );
     }
 }

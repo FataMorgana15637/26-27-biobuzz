@@ -4,6 +4,7 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.fatamorgana.api.robot.hardware.Drawing;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.telemetry.MultipleTelemetry;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.AllianceColour;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.FataOpMode;
@@ -73,6 +74,7 @@ public class FataMain {
         actionScheduler.update();
 
         robot.loop();
+        Drawing.draw();
 
 //        PanelsTelemetry.INSTANCE.getTelemetry().update(currentOpMode.telemetry);
     }

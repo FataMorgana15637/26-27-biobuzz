@@ -12,7 +12,7 @@ import utility.actionbase.runners.SequentialActionRunner;
 public class SeparateIntakeAction extends SequentialActionRunner {
     SeparateIntakeAction() {
         super(
-                intake().empty(),
+                setIntakePose(INTAKE),
 
                 intake().floatTransfer(),
 

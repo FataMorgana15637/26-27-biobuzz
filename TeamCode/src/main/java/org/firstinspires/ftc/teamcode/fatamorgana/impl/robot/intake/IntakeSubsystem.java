@@ -41,7 +41,7 @@ public class IntakeSubsystem extends Subsystem {
         intakeMotor = getDcMotorEx("intake");
         transferMotor = getDcMotorEx("transfer");
 
-//        intakeServo = getServo("intake");
+        intakeServo = getServo("intakeServo");
 
         intakeBeamFront = getDigitalChannel("intakeBeamFront");
         intakeBeamBack = getDigitalChannel("intakeBeamBack");

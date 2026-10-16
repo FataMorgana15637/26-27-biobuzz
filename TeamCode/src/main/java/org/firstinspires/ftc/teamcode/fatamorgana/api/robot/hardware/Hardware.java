@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.fatamorgana.FataMain;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.robot.hardware.decoy.DecoyDigitalChannel;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.robot.hardware.decoy.DecoyLimelight3A;
+import org.firstinspires.ftc.teamcode.fatamorgana.api.robot.hardware.decoy.DecoyMotorEx;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.robot.hardware.decoy.DecoyNormalizedColourSensor;
 
 public interface Hardware {
@@ -34,11 +35,7 @@ public interface Hardware {
     }
 
     default MotorEx getDcMotorEx(String name, boolean enabled, Motor.GoBILDA motorType) {
-        MotorEx motor = new MotorEx(FataMain.getCurrentOpMode().hardwareMap, name, motorType);
-        if (!enabled) {
-            motor.disable();
-        }
-        return motor;
+        return enabled ? new MotorEx(FataMain.getCurrentOpMode().hardwareMap, name, motorType) : new DecoyMotorEx();
     }
 
     default MotorGroup getMotorGroup(@NonNull Motor leader, Motor... followers) {

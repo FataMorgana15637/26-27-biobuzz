@@ -11,7 +11,7 @@ import utility.actionbase.Action;
 
 public class FlowerSubsystem extends Subsystem {
 
-    private ServoEx servoIntake;
+    private ServoEx flowerServo;
     private FlowerPose flowerPose = FlowerPose.UP;
     private static final FlowerSubsystem flower = new FlowerSubsystem();
 
@@ -21,7 +21,7 @@ public class FlowerSubsystem extends Subsystem {
 
     @Override
     public void hardwareInit() {
-        servoIntake = getServo("flower");
+        flowerServo = getServo("flower");
     }
 
     @Override
@@ -42,11 +42,15 @@ public class FlowerSubsystem extends Subsystem {
     }
 
     private Action FlowerUpdate() {
-        return simply(() -> servoIntake.set(flowerDebug == -1 ?
+        return simply(() -> flowerServo.set(flowerDebug == -1 ?
         flowerPose.pose.get() : flowerDebug));
     }
 
     public Action setTarget(FlowerPose flowerPose) {
         return simply(() -> this.flowerPose = flowerPose);
+    }
+
+    public FlowerPose getFlowerPose() {
+        return flowerPose;
     }
 }

@@ -13,8 +13,8 @@ public class FataRobot {
     private final Subsystem[] subsystems = {
            IntakeSubsystem.intake(),
             DriveSubsystem.drive(),
-            YuriSubsystem.yuri().disable(),
-            TurretSubsystem.turret(),
+            YuriSubsystem.yuri(),
+            TurretSubsystem.turret().disable(),
             FlowerSubsystem.flower()
     };
 
