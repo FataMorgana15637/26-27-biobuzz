@@ -123,6 +123,7 @@ public class TurretSubsystem extends Subsystem {
             FataMain.getTelemetry().addData("target to servo", target.get());
             FataMain.getTelemetry().addData("actual target", debug == -1 ? target.get()  : debug);
             FataMain.getTelemetry().addData("debug", debug);
+
         });
     }
 }

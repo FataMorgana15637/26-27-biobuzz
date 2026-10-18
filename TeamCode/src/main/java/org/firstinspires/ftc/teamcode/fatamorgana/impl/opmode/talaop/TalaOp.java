@@ -15,6 +15,8 @@ import static utility.actionbase.actions.Actions.observe;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.fatamorgana.FataMain;
+import org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.AllianceColour;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.FataOpMode;
 import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.actions.RobotActions;
 import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.flower.FlowerPose;
@@ -23,7 +25,8 @@ import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.flower.FlowerPose;
 public class TalaOp extends FataOpMode {
     @Override
     protected void onInit() {
-        drive().setPose(new Pose(144, 72, 270));
+        drive().setPose(new Pose(72, 0, 270));
+        FataMain.setAllianceColor(AllianceColour.RED);
     }
 
     @Override

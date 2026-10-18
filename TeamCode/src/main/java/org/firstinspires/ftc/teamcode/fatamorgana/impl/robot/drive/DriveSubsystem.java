@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.drive;
 
+import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriSubsystem.yuri;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.ManualDrive;
 import com.pedropathing.drivetrain.DrivePowers;
@@ -66,6 +68,9 @@ public class DriveSubsystem extends Subsystem {
         currentPose = follower.pose();
         robotZone.setPosition(x(), y());
         robotZone.setRotation(getHeading());
+        FataMain.getTelemetry().addData("pose", currentPose);
+        FataMain.getTelemetry().addData("hive Pose", yuri().getHiveTarget());
+        FataMain.getTelemetry().addData("hive", getHive().name());
     }
 
     @Override

@@ -15,7 +15,6 @@ import utility.actionbase.Action;
 
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.drive.DriveSubsystem.drive;
 import static utility.actionbase.actions.Actions.simply;
-import static utility.actionbase.actions.Actions.waitUntil;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretMode.*;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretSubsystem.turret;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.StopperPose.STOP;
@@ -37,12 +36,23 @@ public class YuriSubsystem extends Subsystem {
     private StopperPose stopperPose = STOP;
     private YuriState yuriState = SEPARATE;
     private boolean shoot = true;
-
-    private Supplier<Double> yuriTarget = () ->  0.0;
+    private final InterpLUT ballToYuriVel = new InterpLUT();
+    private Supplier<Double> yuriTarget = () -> 0.0;
 
     private final static YuriSubsystem yuri = new YuriSubsystem();
+
     public static YuriSubsystem yuri() {
         return yuri;
+    }
+
+    private YuriSubsystem() {
+        ballToYuriVel.add(310, 50);
+        ballToYuriVel.add(390, 100);
+        ballToYuriVel.add(500, 150);
+        ballToYuriVel.add(580, 200);
+        ballToYuriVel.add(657, 250);
+        ballToYuriVel.add(780, 300);
+        ballToYuriVel.createLUT();
     }
 
     @Override
@@ -56,7 +66,7 @@ public class YuriSubsystem extends Subsystem {
         yuriMotorOne.setRunMode(Motor.RunMode.RawPower);
         yuriMotorOne.stopAndResetEncoder();
         stopper.setInverted(true);
-        hood.setInverted(true);
+        hood.setInverted(false);
     }
 
     @Override
@@ -71,7 +81,7 @@ public class YuriSubsystem extends Subsystem {
 
     @Override
     public void loop() {
-        //            scoreCalc().schedule();
+//        scoreCalc().schedule();
         hoodUpdate().schedule();
         stopperUpdate().schedule();
         motorUpdate().schedule();
@@ -100,17 +110,21 @@ public class YuriSubsystem extends Subsystem {
     }
 
     private Action hoodUpdate() {
-        return simply(() -> hood.set(Range.clip(hoodDebug == -1 ?
-                AngleToHood(hoodPose.pose.get()) :
-                hoodDebug,
-                hoodMinTicks, hoodMaxTicks)
+        return simply(() -> hood.set(hoodDebug == -1 ?
+                angleToHood(
+                        Range.clip(
+                                Math.toDegrees(hoodPose.pose.get()),
+                                Math.toDegrees(hoodMinAngle),
+                                Math.toDegrees(hoodMaxAngle)
+                        )
+                ) : hoodDebug
         ));
     }
 
-    private double AngleToHood(double angle){
-        return (angle - YuriConstants.hoodMinAngle) /
-                (YuriConstants.hoodMaxAngle-hoodMinAngle) *
-                (YuriConstants.hoodMaxTicks - hoodMinTicks) + hoodMinTicks;
+    private double angleToHood(double angle) {
+        double t = (angle - Math.toDegrees(hoodMinAngle)) /
+                (Math.toDegrees(hoodMaxAngle) - Math.toDegrees(hoodMinAngle));
+        return hoodMinTicks + t * (hoodMaxTicks - hoodMinTicks);
     }
 
     private Action stopperUpdate() {
@@ -121,7 +135,7 @@ public class YuriSubsystem extends Subsystem {
     private Action bang(Supplier<Double> target) {
         return simply(() -> {
             double error = Math.abs(yuriMotors.getVelocity() - target.get());
-            if (error > YuriConstants.tolerance) {
+            if (error > tolerance) {
                 if (yuriMotors.getVelocity() < target.get()) {
                     yuriMotors.set(maxBangConstants);
                 } else yuriMotors.set(-maxBangConstants);
@@ -132,19 +146,26 @@ public class YuriSubsystem extends Subsystem {
     private Action pf(Supplier<Double> target) {
         return simply(() -> {
             double error = target.get() - yuriMotors.getVelocity();
-            yuriMotors.set(f * Math.abs(yuriMotors.getVelocity())
+            yuriMotors.set(f * target.get()
                     + p * error);
         });
     }
 
+    private double ballVelocityToDistance(double distance) {
+        return distance / Math.cos((hoodMinAngle)) *
+                Math.sqrt(
+                        g / 2 * (distance * Math.tan(hoodMinAngle) - shooterHeight)
+                );
+    }
+
     private Action bangBangController(Supplier<Double> ofeksMom) {
-        return bang(ofeksMom).then(
-                        waitUntil(() -> yuriMotors.getVelocity() == ofeksMom.get()))
-                .then(pf(ofeksMom));
+//        return bang(ofeksMom).then(
+//                        waitUntil(() -> yuriMotors.getVelocity() == ofeksMom.get()))
+        return pf(ofeksMom);
     }
 
     private Pose getShooterPose() {
-        double theta = drive().getHeading();
+        double theta = Math.toRadians(drive().getHeading());
         double x = drive().x() - shooterOffset * Math.sin(theta);
         double y = drive().y() + shooterOffset * Math.cos(theta);
 
@@ -166,7 +187,7 @@ public class YuriSubsystem extends Subsystem {
         return drive().getPassTarget();
     }
 
-    private Pose getHiveTarget() {
+    public Pose getHiveTarget() {
         return drive().getHive().getTarget(drive().x());
     }
 
@@ -185,7 +206,7 @@ public class YuriSubsystem extends Subsystem {
 //        return hiveHeight;
 //    }
 
-//    private double getHiveTrajectoryAngle() {
+    //    private double getHiveTrajectoryAngle() {
 //        double trajectory;
 //        double x = getHiveTarget().x();
 //
@@ -199,15 +220,13 @@ public class YuriSubsystem extends Subsystem {
 //
 //        return trajectory;
 //    }
-
-
     private double calcHoodAngle() {
         boolean pass = turret().getTurretMode() == PASS;
         double height = pass ? hiveHeight : passHeight;
-        double heightDiff =  -shooterHeight;
+        double heightDiff = height - shooterHeight;
 
-        return Math.atan(2 * heightDiff / getTargetDist() -
-                Math.tan(pass ? passLaunchAngle : scoreLaunchAngle)
+        return /*Math.toDegrees*/(Math.atan(2 * heightDiff / getTargetDist() -
+                Math.tan(pass ? passLaunchAngle : scoreLaunchAngle))
         );
     }
 
@@ -226,22 +245,13 @@ public class YuriSubsystem extends Subsystem {
         ));
     }
 
-    private double ballToYuriVelocity(Supplier<Double> ballVelocity) {
-        InterpLUT ballToYuriVel;
-        ballToYuriVel = new InterpLUT();
-
-        ballToYuriVel.add(0, 0);
-        ballToYuriVel.add(1, 0);
-
-        double clippedBallVelocity;
-        clippedBallVelocity = Range.clip(minBallVelocity, maxBallVelocity, ballVelocity.get());
-
-        return ballToYuriVel.get(clippedBallVelocity);
+    private double ballToYuriVelocity(double ballVelocity) {
+        return ballVelocityToDistance(ballToYuriVel.get(ballVelocity));
     }
 
     private Action scoreCalc() {
         return setYuriTarget(
-                () -> ballToYuriVelocity(this::calcScoreBallVelocity))
+                () -> ballToYuriVelocity(calcScoreBallVelocity()))
                 .also(setHood(CALC));
     }
 
@@ -269,22 +279,28 @@ public class YuriSubsystem extends Subsystem {
         return simply(() -> this.yuriTarget = yuriTarget);
     }
 
-    private Action motorUpdate(){
+    private Action motorUpdate() {
         return power == 0 ?
-                bangBangController(yuriTarget):
+                bangBangController(yuriTarget) :
                 simply(() -> yuriMotors.set(power));
     }
 
-    public double getYuriVelocity(){
+    public double getYuriVelocity() {
         return yuriMotors.getVelocity();
     }
 
-    private Action telemetryUpdate(){
+    private Action telemetryUpdate() {
         return simply(() -> {
             FataMain.getTelemetry().addData("target", yuriTarget.get());
             FataMain.getTelemetry().addData("currentVelocity", getYuriVelocity());
             FataMain.getTelemetry().addData("stopper", stopper.get());
             FataMain.getTelemetry().addData("hood", hood.get());
+            FataMain.getTelemetry().addData("ballVelocity", calcScoreBallVelocity());
+            FataMain.getTelemetry().addData("yuriVElocity", ballToYuriVelocity(calcScoreBallVelocity()));
+            FataMain.getTelemetry().addData("targetDist", getTargetDist());
+            FataMain.getTelemetry().addData("natural hood angle", calcHoodAngle());
+            FataMain.getTelemetry().addData("angle hood", Math.toDegrees(calcHoodAngle()));
+            FataMain.getTelemetry().addData("turret mode", turret().getTurretMode());
         });
     }
 

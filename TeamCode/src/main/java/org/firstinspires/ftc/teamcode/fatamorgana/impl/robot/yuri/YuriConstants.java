@@ -17,18 +17,18 @@ public class YuriConstants {
     public static double stopperFlow = 0.528;
 
     public static double shooterOffset = 0.0;
-    public static double shooterHeight = 0.0;
+    public static double shooterHeight = 9.7638;
     public static double g = 9.80665;
     public static double minBallVelocity;
     public static double maxBallVelocity;
     public static double passHeightDiff = -shooterHeight;
-    public static double hiveHeight = 0.0;
+    public static double hiveHeight = 53.15;
     public static double passHeight = 0.0;
-    public static double passLaunchAngle = 0.0;
-    public static double scoreLaunchAngle = 0.0;
+    public static double passLaunchAngle = -70;
+    public static double scoreLaunchAngle = Math.toRadians(-35);
     public static double tolerance = 100;
-    public static double hoodMinTicks = 0.43;
-    public static double hoodMinAngle = 32.43;
-    public static double hoodMaxAngle = 55;
-    public static double hoodMaxTicks = 0.05;
+    public static double hoodMinTicks = 0.0;
+    public static double hoodMinAngle = Math.toRadians(32.43);
+    public static double hoodMaxAngle = Math.toRadians(55);
+    public static double hoodMaxTicks = 0.375;
 }
