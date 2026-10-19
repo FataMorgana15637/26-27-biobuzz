@@ -36,7 +36,7 @@ public class YuriSubsystem extends Subsystem {
     private StopperPose stopperPose = STOP;
     private YuriState yuriState = SEPARATE;
     private boolean shoot = true;
-    private final InterpLUT ballToYuriVel = new InterpLUT();
+    private final InterpLUT distanceToMotorLUT = new InterpLUT();
     private Supplier<Double> yuriTarget = () -> 0.0;
 
     private final static YuriSubsystem yuri = new YuriSubsystem();
@@ -46,13 +46,14 @@ public class YuriSubsystem extends Subsystem {
     }
 
     private YuriSubsystem() {
-        ballToYuriVel.add(310, 50);
-        ballToYuriVel.add(390, 100);
-        ballToYuriVel.add(500, 150);
-        ballToYuriVel.add(580, 200);
-        ballToYuriVel.add(657, 250);
-        ballToYuriVel.add(780, 300);
-        ballToYuriVel.createLUT();
+        distanceToMotorLUT.add(50 * cmToInches, 310);
+        distanceToMotorLUT.add(100 * cmToInches, 390);
+        distanceToMotorLUT.add(150 * cmToInches, 500);
+        distanceToMotorLUT.add(200 * cmToInches, 580);
+        distanceToMotorLUT.add(250 * cmToInches, 657);
+        distanceToMotorLUT.add(300 * cmToInches, 780);
+
+        distanceToMotorLUT.createLUT();
     }
 
     @Override
@@ -81,7 +82,7 @@ public class YuriSubsystem extends Subsystem {
 
     @Override
     public void loop() {
-//        scoreCalc().schedule();
+        scoreCalc().schedule();
         hoodUpdate().schedule();
         stopperUpdate().schedule();
         motorUpdate().schedule();
@@ -151,12 +152,7 @@ public class YuriSubsystem extends Subsystem {
         });
     }
 
-    private double ballVelocityToDistance(double distance) {
-        return distance / Math.cos((hoodMinAngle)) *
-                Math.sqrt(
-                        g / 2 * (distance * Math.tan(hoodMinAngle) - shooterHeight)
-                );
-    }
+
 
     private Action bangBangController(Supplier<Double> ofeksMom) {
 //        return bang(ofeksMom).then(
@@ -222,11 +218,11 @@ public class YuriSubsystem extends Subsystem {
 //    }
     private double calcHoodAngle() {
         boolean pass = turret().getTurretMode() == PASS;
-        double height = pass ? hiveHeight : passHeight;
-        double heightDiff = height - shooterHeight;
+        double targetHeight = pass ? passHeight : hiveHeight;
+        double heightDiff = targetHeight - shooterHeight;
 
         return /*Math.toDegrees*/(Math.atan(2 * heightDiff / getTargetDist() -
-                Math.tan(pass ? passLaunchAngle : scoreLaunchAngle))
+                Math.tan(pass ? passTrajectoryAngle : scoreTrajectoryAngle))
         );
     }
 
@@ -234,19 +230,31 @@ public class YuriSubsystem extends Subsystem {
         return calcHoodAngle();
     }
 
+
+
     private double calcScoreBallVelocity() {
         boolean pass = turret().getTurretMode() == PASS;
-        double height = pass ? hiveHeight : passHeight;
-        double heightDiff = height - shooterHeight;
+        double targetHeight = pass ? passHeight : hiveHeight;
+        double heightDiff = targetHeight - shooterHeight;
         double hoodAngle = calcHoodAngle();
 
-        return (Math.sqrt(g * getTargetDist() * getTargetDist() /
-                (2 * Math.pow(Math.cos(hoodAngle), 2)) * getTargetDist() * (Math.tan(hoodAngle) - heightDiff)
+        return (Math.sqrt((g * getTargetDist() * getTargetDist()) /
+                (2 * Math.pow(Math.cos(hoodAngle), 2)
+                * (getTargetDist() * Math.tan(hoodAngle) - heightDiff))
         ));
     }
 
+    private double ballVelocityToDistance(double velocity) {
+        return (velocity * Math.cos(hoodMinAngle) / g) *
+                (velocity * Math.sin(hoodMinAngle) +
+                        Math.sqrt(
+                                Math.pow(velocity * Math.sin(hoodMinAngle), 2)
+                                        + 2 * g * shooterHeight
+                        ));
+    }
+
     private double ballToYuriVelocity(double ballVelocity) {
-        return ballVelocityToDistance(ballToYuriVel.get(ballVelocity));
+        return distanceToMotorLUT.get(Range.clip(ballVelocityToDistance(ballVelocity), 50*cmToInches+0.01, 300*cmToInches-0.01));
     }
 
     private Action scoreCalc() {
