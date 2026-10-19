@@ -113,11 +113,11 @@ public class YuriSubsystem extends Subsystem {
     private Action hoodUpdate() {
         return simply(() -> hood.set(hoodDebug == -1 ?
                 angleToHood(
-                        Range.clip(
-                                Math.toDegrees(hoodPose.pose.get()),
-                                Math.toDegrees(hoodMinAngle),
-                                Math.toDegrees(hoodMaxAngle)
-                        )
+//                        Range.clip(
+                                Math.toDegrees(/*hoodPose.pose.get()*/ getCalcHoodAngle())
+//                                Math.toDegrees(hoodMinAngle),
+//                                Math.toDegrees(hoodMaxAngle)
+//                        )
                 ) : hoodDebug
         ));
     }
