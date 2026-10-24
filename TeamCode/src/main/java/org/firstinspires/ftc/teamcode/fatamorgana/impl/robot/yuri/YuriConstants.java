@@ -4,8 +4,8 @@ import com.bylazar.configurables.annotations.Configurable;
 
 @Configurable
 public class YuriConstants {
-    public static double f = 0.0013;
-    public static double p = 0.005;
+    public static double f = 0.000125;
+    public static double p = 0.00;
     public static double maxBangConstants = 1;
     public static double cmToInches = 0.393701;
 
@@ -29,8 +29,8 @@ public class YuriConstants {
     public static double scoreTrajectoryAngle = Math.toRadians(-35);
     public static double tolerance = 100;
     public static double hoodMinTicks = 0.0;
-    public static double hoodMinAngle = Math.toRadians(32.43);
-    public static double hoodMaxAngle = Math.toRadians(55);
+    public static double hoodMinAngle = Math.toRadians(26);
+    public static double hoodMaxAngle = Math.toRadians(46);
     public static double hoodMaxTicks = 0.375;
 
 }

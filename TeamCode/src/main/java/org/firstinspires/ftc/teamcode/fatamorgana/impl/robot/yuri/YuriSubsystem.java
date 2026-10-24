@@ -114,7 +114,7 @@ public class YuriSubsystem extends Subsystem {
         return simply(() -> hood.set(hoodDebug == -1 ?
                 angleToHood(
 //                        Range.clip(
-                                Math.toDegrees(/*hoodPose.pose.get()*/ getCalcHoodAngle())
+                                /*hoodPose.pose.get()*/ getCalcHoodAngle()
 //                                Math.toDegrees(hoodMinAngle),
 //                                Math.toDegrees(hoodMaxAngle)
 //                        )

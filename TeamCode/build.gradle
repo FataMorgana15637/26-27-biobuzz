@@ -25,9 +25,9 @@ android {
 }
 
 repositories {
-//    maven {
-//        url = 'https://maven.brott.dev/'
-//    }
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
 
     maven {
         url = 'https://mymaven.bylazar.com/releases'
@@ -52,15 +52,15 @@ dependencies {
     implementation "org.solverslib:pedroPathing:0.3.6" // pedroPathing
     implementation "org.solverslib:photon:0.3.6" // photon is optional (see docs for more info)
 
-//    implementation "com.acmerobotics.dashboard:dashboard:0.5.1" // FTC Dashboard
-
+    implementation 'com.acmerobotics.dashboard:dashboard:0.6.0' // ftc dashboard
     // Pedro Pathing
-    implementation 'com.pedropathing:revhub:3.0.0'
-    implementation 'com.pedropathing:tuning:1.0.0' // AutoTune (see Tuning.java)
+    implementation 'com.pedropathing:revhub:3.0.2'
+    implementation 'com.pedropathing:tuning:1.0.2' // AutoTune (see Tuning.java)
 
     // Panels Dashboard
     implementation "com.bylazar:fullpanels:1.0.18"
 
     //Marrow
-    implementation 'com.skeletonarmyftc.marrow:core:1.2.1'
+
+    implementation 'com.skeletonarmyftc.marrow:core:1.2.2'
 }
