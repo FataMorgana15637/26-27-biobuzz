@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri;
 
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.util.Range;
+import com.seattlesolvers.solverslib.controller.wpilibcontroller.SimpleMotorFeedforward;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.hardware.motors.MotorGroup;
@@ -37,6 +38,13 @@ public class YuriSubsystem extends Subsystem {
     private YuriState yuriState = SEPARATE;
     private boolean shoot = true;
     private final InterpLUT distanceToMotorLUT = new InterpLUT();
+    private final InterpLUT motorLUT = new InterpLUT();
+    private final InterpLUT hoodLUT = new InterpLUT();
+    private final FeedForwardController feedForwardController = new FeedForwardController(
+            () -> kS,
+            () -> kV,
+            () -> kA
+    );
     private Supplier<Double> yuriTarget = () -> 0.0;
 
     private final static YuriSubsystem yuri = new YuriSubsystem();
@@ -53,6 +61,18 @@ public class YuriSubsystem extends Subsystem {
         distanceToMotorLUT.add(250 * cmToInches, 657);
         distanceToMotorLUT.add(300 * cmToInches, 780);
 
+        motorLUT.add(0, 0);
+        motorLUT.add(0, 0);
+        motorLUT.add(0, 0);
+        motorLUT.add(0, 0);
+        motorLUT.add(0, 0);
+
+        hoodLUT.add(0,0);
+        hoodLUT.add(0,0);
+        hoodLUT.add(0,0);
+        hoodLUT.add(0,0);
+        hoodLUT.add(0,0);
+
         distanceToMotorLUT.createLUT();
     }
 
@@ -63,7 +83,8 @@ public class YuriSubsystem extends Subsystem {
         yuriMotors = getMotorGroup(yuriMotorOne, yuriMotorTwo);
         hood = getServo("hood");
         stopper = getServo("stopper");
-        yuriMotorOne.setInverted(true);
+        yuriMotorOne.setInverted(false);
+        yuriMotorTwo.setInverted(true);
         yuriMotorOne.setRunMode(Motor.RunMode.RawPower);
         yuriMotorOne.stopAndResetEncoder();
         stopper.setInverted(true);
@@ -82,7 +103,7 @@ public class YuriSubsystem extends Subsystem {
 
     @Override
     public void loop() {
-        scoreCalc().schedule();
+//        scoreCalc().schedule();
         hoodUpdate().schedule();
         stopperUpdate().schedule();
         motorUpdate().schedule();
@@ -112,13 +133,13 @@ public class YuriSubsystem extends Subsystem {
 
     private Action hoodUpdate() {
         return simply(() -> hood.set(hoodDebug == -1 ?
-                angleToHood(
-//                        Range.clip(
-                                /*hoodPose.pose.get()*/ getCalcHoodAngle()
-//                                Math.toDegrees(hoodMinAngle),
-//                                Math.toDegrees(hoodMaxAngle)
-//                        )
-                ) : hoodDebug
+/*                angleToHood(
+                        Range.clip(
+                                getCalcHoodAngle(),
+                                Math.toDegrees(hoodMinAngle),
+                                Math.toDegrees(hoodMaxAngle)
+                        )
+                ) */hoodLUT.get(getTargetDist()) : hoodDebug
         ));
     }
 
@@ -133,32 +154,36 @@ public class YuriSubsystem extends Subsystem {
                 stopperPose.get() : stopperDebug));
     }
 
-    private Action bang(Supplier<Double> target) {
-        return simply(() -> {
-            double error = Math.abs(yuriMotors.getVelocity() - target.get());
-            if (error > tolerance) {
-                if (yuriMotors.getVelocity() < target.get()) {
-                    yuriMotors.set(maxBangConstants);
-                } else yuriMotors.set(-maxBangConstants);
-            }
-        });
-    }
+//    private Action bang(Supplier<Double> target) {
+//        return simply(() -> {
+//            double error = Math.abs(yuriMotors.getVelocity() - target.get());
+//            if (error > tolerance) {
+//                if (yuriMotors.getVelocity() < target.get()) {
+//                    yuriMotors.set(maxBangConstants);
+//                } else yuriMotors.set(-maxBangConstants);
+//            }
+//        });
+//    }
 
     private Action pf(Supplier<Double> target) {
         return simply(() -> {
-            double error = target.get() - yuriMotors.getVelocity();
-            yuriMotors.set(f * target.get()
-                    + p * error);
+//            pidUp.setCurrentVelocity(yuriMotors.getVelocity());
+//            pidDown.setCurrentVelocity(yuriMotors.getVelocity());
+//            double power = target.get() - yuriMotors.getVelocity() >= 0 ?
+//                    pidUp.update(target) :
+//                    pidDown.update(target);
+//            yuriMotors.set(power);
+
+            FataMain.getTelemetry().addData("power", power);
         });
     }
 
 
 
-    private Action bangBangController(Supplier<Double> ofeksMom) {
-//        return bang(ofeksMom).then(
-//                        waitUntil(() -> yuriMotors.getVelocity() == ofeksMom.get()))
-        return pf(ofeksMom);
-    }
+//    private Action bangBangController(Supplier<Double> ofeksMom) {
+//        return pf(ofeksMom);
+//    }
+
 
     private Pose getShooterPose() {
         double theta = Math.toRadians(drive().getHeading());
@@ -216,6 +241,15 @@ public class YuriSubsystem extends Subsystem {
 //
 //        return trajectory;
 //    }
+    private Action feedForward(Supplier<Double> yuriTarget){
+        return simply(() ->{
+            double voltage = feedForwardController.update(yuriTarget);
+            double batteryVoltage = FataMain.getCurrentOpMode()
+                    .hardwareMap.voltageSensor.iterator().next().getVoltage();
+            double power = voltage / batteryVoltage;
+            yuriMotors.set(power);
+        });
+    }
     private double calcHoodAngle() {
         boolean pass = turret().getTurretMode() == PASS;
         double targetHeight = pass ? passHeight : hiveHeight;
@@ -229,8 +263,6 @@ public class YuriSubsystem extends Subsystem {
     public double getCalcHoodAngle() {
         return calcHoodAngle();
     }
-
-
 
     private double calcScoreBallVelocity() {
         boolean pass = turret().getTurretMode() == PASS;
@@ -259,8 +291,8 @@ public class YuriSubsystem extends Subsystem {
 
     private Action scoreCalc() {
         return setYuriTarget(
-                () -> ballToYuriVelocity(calcScoreBallVelocity()))
-                .also(setHood(CALC));
+                () -> motorLUT.get(getTargetDist())
+        );
     }
 
     public Action setYuriState(YuriState yuriState) {
@@ -288,8 +320,9 @@ public class YuriSubsystem extends Subsystem {
     }
 
     private Action motorUpdate() {
+        yuriTarget = overrideTarget == -1 ? yuriTarget : () -> overrideTarget;
         return power == 0 ?
-                bangBangController(yuriTarget) :
+                feedForward(yuriTarget) :
                 simply(() -> yuriMotors.set(power));
     }
 
@@ -311,6 +344,7 @@ public class YuriSubsystem extends Subsystem {
             FataMain.getTelemetry().addData("turret mode", turret().getTurretMode());
         });
     }
+
 
     public double getPower() {
         return power;

@@ -65,7 +65,7 @@ public class IntakeSubsystem extends Subsystem {
     @Override
     public void loop() {
         intakeUpdate().schedule();
-//        servoUpdate().schedule();
+        servoUpdate().schedule();
         beamUpdate().schedule();
         telemtryUpdate().schedule();
     }

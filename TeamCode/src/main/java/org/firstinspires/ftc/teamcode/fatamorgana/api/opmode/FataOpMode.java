@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.fatamorgana.FataMain;
 
-public class FataOpMode extends LinearOpMode {
+public abstract class FataOpMode extends LinearOpMode {
     private final OpModeType type;
     private OpModeStage stage;
     private boolean endOpMode = false;
@@ -53,25 +53,15 @@ public class FataOpMode extends LinearOpMode {
         stop();
     }
 
-    protected void onInit() {
+    protected abstract void onInit();
 
-    }
+    protected abstract void initLoop();
 
-    protected void initLoop() {
+    protected abstract void onPlay();
 
-    }
+    protected abstract void onLoop();
 
-    protected void onPlay() {
-
-    }
-
-    protected void onLoop() {
-
-    }
-
-    protected void onStop() {
-
-    }
+    protected abstract void onStop();
 
     public OpModeStage getStage() {
         return stage;

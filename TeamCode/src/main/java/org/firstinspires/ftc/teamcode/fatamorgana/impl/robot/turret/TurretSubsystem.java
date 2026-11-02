@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.Turre
 import static utility.actionbase.actions.Actions.simply;
 
 import com.pedropathing.math.Pose;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 import com.seattlesolvers.solverslib.hardware.servos.ServoExGroup;
 
@@ -35,8 +36,8 @@ public class TurretSubsystem extends Subsystem {
 
     @Override
     public void hardwareInit() {
-        servoR = getServo("servoR", 0, 360);
-        servoL = getServo("servoL",0, 360);
+        servoR = getServo("servoR");
+        servoL = getServo("servoL");
 
         turretServos = getServoGroup(servoR, servoL);
     }

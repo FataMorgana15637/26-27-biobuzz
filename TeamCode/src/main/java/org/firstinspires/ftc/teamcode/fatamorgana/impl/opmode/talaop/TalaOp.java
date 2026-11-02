@@ -19,13 +19,14 @@ import org.firstinspires.ftc.teamcode.fatamorgana.FataMain;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.AllianceColour;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.FataOpMode;
 import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.actions.RobotActions;
+import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.flower.FlowerPose;
 
 @TeleOp
 public class TalaOp extends FataOpMode {
     @Override
     protected void onInit() {
-        drive().setPose(new Pose(72, 0, 270));
+        drive().setPose(new Pose(72, 0 + DriveConstants.robotLength/2, Math.toRadians(90)));
         FataMain.setAllianceColor(AllianceColour.RED);
     }
 

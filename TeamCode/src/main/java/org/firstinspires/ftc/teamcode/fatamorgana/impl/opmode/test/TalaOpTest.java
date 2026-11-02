@@ -18,18 +18,20 @@ public class TalaOpTest extends FataOpMode {
 
     @Override
     protected void onInit() {
-        super.onInit();
-//        yuriMotor = FataMain.getCurrentOpMode().hardwareMap.dcMotor.get("motor");
+        //        yuriMotor = FataMain.getCurrentOpMode().hardwareMap.dcMotor.get("motor");
+    }
+
+    @Override
+    protected void initLoop() {
+
     }
 
     protected void onPlay() {
-        super.onPlay();
 
 //        button(() -> gamepad1.right_bumper)
     }
 //
     protected void onLoop() {
-        super.onLoop();
         simply(() -> FataMain.getTelemetry().addLine("name")).schedule();
 
         FataMain.getTelemetry().addData("config",TestConfig.configVal);
@@ -40,5 +42,10 @@ public class TalaOpTest extends FataOpMode {
                 gamepad1.left_stick_x / (gamepad1.right_trigger > 0.3 ? 4.5 : 1),
                 -gamepad1.right_stick_x / (gamepad1.right_trigger > 0.3 ? 4.5 : 1)
         );
+    }
+
+    @Override
+    protected void onStop() {
+
     }
 }
