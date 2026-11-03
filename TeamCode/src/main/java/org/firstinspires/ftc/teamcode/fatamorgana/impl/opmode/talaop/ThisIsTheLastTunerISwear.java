@@ -1,19 +1,23 @@
 package org.firstinspires.ftc.teamcode.fatamorgana.impl.opmode.talaop;
 
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
+@Configurable
 public class ThisIsTheLastTunerISwear extends LinearOpMode {
     public double manualPower = 0.3;
     public boolean closedLoop = false;
-    public double targetVelocity = 3000;
+    public static double targetVelocity = 0;
     public double kS = 0.0;
-    public double kV = 0.0001;
-    public double kP = 0.0001;
-    public double maxPower = 0.8;
+    public double kV = 0.000;
+    public double kP = 0.000;
+    public double maxPower = 1;
     public double referenceVoltage = 12.0;
     private MotorEx motor;
     private MotorEx motorTwo;
@@ -21,11 +25,17 @@ public class ThisIsTheLastTunerISwear extends LinearOpMode {
 
     public void runOpMode() {
 
+        TelemetryManager Ptelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+
         motor = hardwareMap.get(MotorEx.class, "yuri");
+        motorTwo = hardwareMap.get(MotorEx.class, "yuriTwo");
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         motor.setRunMode(MotorEx.RunMode.RawPower);
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
+
+        motorTwo.setRunMode(MotorEx.RunMode.RawPower);
+        motorTwo.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
 
         // Capture battery voltage as initial reference.
         referenceVoltage = voltageSensor.getVoltage();
@@ -72,6 +82,7 @@ public class ThisIsTheLastTunerISwear extends LinearOpMode {
             );
 
             motor.set(appliedPower);
+            motorTwo.set(appliedPower);
 
             // ======================================
             // Voltage calculations
@@ -138,11 +149,15 @@ public class ThisIsTheLastTunerISwear extends LinearOpMode {
             telemetry.addData("Estimated kV (V/(tick/s))",
                     estimatedKV);
 
+            Ptelemetry.addData("target", targetVelocity);
+            Ptelemetry.addData("currentVelocity", currentVelocity);
+            Ptelemetry.update();
             telemetry.update();
 
             idle();
         }
 
         motor.set(0);
+        motorTwo.set(0);
     }
 }

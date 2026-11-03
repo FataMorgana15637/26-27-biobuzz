@@ -45,6 +45,23 @@ public class YuriSubsystem extends Subsystem {
             () -> kV,
             () -> kA
     );
+
+    private final PFController pidUp = new PFController(
+            () -> p,
+            () -> f,
+            () -> bigPF,
+            () -> bigFF,
+            () -> pidSwitch
+    );
+
+    private final PFController pidDown = new PFController(
+            () -> p,
+            () -> f,
+            () -> bigPF,
+            () -> bigFF,
+            () -> pidSwitch
+    );
+
     private Supplier<Double> yuriTarget = () -> 0.0;
 
     private final static YuriSubsystem yuri = new YuriSubsystem();
@@ -167,12 +184,12 @@ public class YuriSubsystem extends Subsystem {
 
     private Action pf(Supplier<Double> target) {
         return simply(() -> {
-//            pidUp.setCurrentVelocity(yuriMotors.getVelocity());
-//            pidDown.setCurrentVelocity(yuriMotors.getVelocity());
-//            double power = target.get() - yuriMotors.getVelocity() >= 0 ?
-//                    pidUp.update(target) :
-//                    pidDown.update(target);
-//            yuriMotors.set(power);
+            pidUp.setCurrentVelocity(yuriMotors.getVelocity());
+            pidDown.setCurrentVelocity(yuriMotors.getVelocity());
+            double power = target.get() - yuriMotors.getVelocity() >= 0 ?
+                    pidUp.update(target) :
+                    pidDown.update(target);
+            yuriMotors.set(power);
 
             FataMain.getTelemetry().addData("power", power);
         });
@@ -322,7 +339,7 @@ public class YuriSubsystem extends Subsystem {
     private Action motorUpdate() {
         yuriTarget = overrideTarget == -1 ? yuriTarget : () -> overrideTarget;
         return power == 0 ?
-                feedForward(yuriTarget) :
+                /*feedForward(yuriTarget)*/ pf(yuriTarget) :
                 simply(() -> yuriMotors.set(power));
     }
 

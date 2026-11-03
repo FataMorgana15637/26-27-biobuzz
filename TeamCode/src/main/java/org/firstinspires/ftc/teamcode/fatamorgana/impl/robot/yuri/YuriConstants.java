@@ -5,13 +5,13 @@ import com.bylazar.configurables.annotations.Configurable;
 @Configurable
 public class YuriConstants {
     //pf
-//    public static double f = 0.00068;
-//    public static double p = 0.01;
-//    public static double bigPF = 0.01;
-//    public static double bigFF = 0.008;
-//    public static double bigFR = 0.00006;
-//    public static double bigPR  = 0.00006;
-//    public static double pidSwitch = 100;
+    public static double f = 0.00068;
+    public static double p = 0.01;
+    public static double bigPF = 0.01;
+    public static double bigFF = 0.008;
+    public static double bigFR = 0.00006;
+    public static double bigPR  = 0.00006;
+    public static double pidSwitch = 100;
     //ks,kv,ka
     public static double kS = 2.3429;
     public static double kV = -0.005828;
