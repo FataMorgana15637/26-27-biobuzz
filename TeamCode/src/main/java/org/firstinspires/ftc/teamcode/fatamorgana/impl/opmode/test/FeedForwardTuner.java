@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.teamcode.fatamorgana.impl.opmode.talaop;
+package org.firstinspires.ftc.teamcode.fatamorgana.impl.opmode.test;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

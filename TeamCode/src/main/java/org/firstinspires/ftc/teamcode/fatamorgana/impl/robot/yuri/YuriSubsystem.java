@@ -67,11 +67,11 @@ public class YuriSubsystem extends Subsystem {
         motorLUT.add(0, 0);
         motorLUT.add(0, 0);
 
-        hoodLUT.add(0,0);
-        hoodLUT.add(0,0);
-        hoodLUT.add(0,0);
-        hoodLUT.add(0,0);
-        hoodLUT.add(0,0);
+        hoodLUT.add(0, 0);
+        hoodLUT.add(0, 0);
+        hoodLUT.add(0, 0);
+        hoodLUT.add(0, 0);
+        hoodLUT.add(0, 0);
 
         distanceToMotorLUT.createLUT();
     }
@@ -179,7 +179,6 @@ public class YuriSubsystem extends Subsystem {
     }
 
 
-
 //    private Action bangBangController(Supplier<Double> ofeksMom) {
 //        return pf(ofeksMom);
 //    }
@@ -241,8 +240,8 @@ public class YuriSubsystem extends Subsystem {
 //
 //        return trajectory;
 //    }
-    private Action feedForward(Supplier<Double> yuriTarget){
-        return simply(() ->{
+    private Action feedForward(Supplier<Double> yuriTarget) {
+        return simply(() -> {
             double voltage = feedForwardController.update(yuriTarget);
             double batteryVoltage = FataMain.getCurrentOpMode()
                     .hardwareMap.voltageSensor.iterator().next().getVoltage();
@@ -250,6 +249,7 @@ public class YuriSubsystem extends Subsystem {
             yuriMotors.set(power);
         });
     }
+
     private double calcHoodAngle() {
         boolean pass = turret().getTurretMode() == PASS;
         double targetHeight = pass ? passHeight : hiveHeight;
@@ -272,7 +272,7 @@ public class YuriSubsystem extends Subsystem {
 
         return (Math.sqrt((g * getTargetDist() * getTargetDist()) /
                 (2 * Math.pow(Math.cos(hoodAngle), 2)
-                * (getTargetDist() * Math.tan(hoodAngle) - heightDiff))
+                        * (getTargetDist() * Math.tan(hoodAngle) - heightDiff))
         ));
     }
 
@@ -286,7 +286,7 @@ public class YuriSubsystem extends Subsystem {
     }
 
     private double ballToYuriVelocity(double ballVelocity) {
-        return distanceToMotorLUT.get(Range.clip(ballVelocityToDistance(ballVelocity), 50*cmToInches+0.01, 300*cmToInches-0.01));
+        return distanceToMotorLUT.get(Range.clip(ballVelocityToDistance(ballVelocity), 50 * cmToInches + 0.01, 300 * cmToInches - 0.01));
     }
 
     private Action scoreCalc() {

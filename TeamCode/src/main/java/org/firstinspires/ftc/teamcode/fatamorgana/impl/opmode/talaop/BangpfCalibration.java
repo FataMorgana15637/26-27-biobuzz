@@ -22,6 +22,8 @@ public class BangpfCalibration extends FataOpMode {
     public static double target = 0.0;
     public static double targetB = 0.0;
 
+    public static double power = 0.0;
+
     @Override
     protected void onInit() {
         drive().setPose(new Pose(72, 0 + DriveConstants.robotLength/2, Math.toRadians(90)));
@@ -36,7 +38,7 @@ public class BangpfCalibration extends FataOpMode {
     @Override
     protected void onPlay() {
         button(() -> gamepad1.right_bumper).whenPressed(
-                () -> yuri().setYuriTarget(() -> 1000.0)).create();
+                () -> yuri().setPower(power)).create();
 
         button(() -> gamepad1.left_bumper).whenPressed(
                 () -> yuri().setYuriTarget(() -> target)
