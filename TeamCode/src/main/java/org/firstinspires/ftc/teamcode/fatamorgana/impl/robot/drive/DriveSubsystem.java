@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.drive;
 
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriSubsystem.yuri;
 
+import static utility.actionbase.actions.Actions.simply;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.ManualDrive;
 import com.pedropathing.drivetrain.DrivePowers;
@@ -13,6 +15,8 @@ import org.firstinspires.ftc.teamcode.fatamorgana.FataMain;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.opmode.AllianceColour;
 import org.firstinspires.ftc.teamcode.fatamorgana.api.robot.hardware.Subsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+import utility.actionbase.Action;
 
 public class DriveSubsystem extends Subsystem {
     private static final DriveSubsystem drive = new DriveSubsystem();
@@ -100,10 +104,10 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public Hive getHive() {
-        if (y() <= 72 ) return FataMain.getAllianceColour() ==
+        if (y() <= 72) return FataMain.getAllianceColour() ==
                 AllianceColour.RED ? Hive.FRONT_RED : Hive.BACK_BLUE;
 
-        if (y() > 72 ) return FataMain.getAllianceColour() ==
+        if (y() > 72) return FataMain.getAllianceColour() ==
                 AllianceColour.RED ? Hive.BACK_RED : Hive.FRONT_BLUE;
 
         return null;
@@ -121,7 +125,7 @@ public class DriveSubsystem extends Subsystem {
         follower.setPose(pose);
     }
 
-    public void resetHeading(double heading){
-        follower.setHeading(heading);
+    public Action resetHeading(double heading) {
+        return simply(() -> follower.setHeading(heading));
     }
 }

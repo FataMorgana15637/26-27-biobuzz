@@ -4,6 +4,11 @@ import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.drive.DriveS
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretConstants.*;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretMode.PASS;
 import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.turret.TurretMode.SCORE;
+import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriConstants.hoodMaxAngle;
+import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriConstants.hoodMaxTicks;
+import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriConstants.hoodMinAngle;
+import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriConstants.hoodMinTicks;
+import static org.firstinspires.ftc.teamcode.fatamorgana.impl.robot.yuri.YuriConstants.overrideTarget;
 
 import static utility.actionbase.actions.Actions.simply;
 
@@ -64,11 +69,18 @@ public class TurretSubsystem extends Subsystem {
     public void stop() {
 
     }
-    private Action servoUpdate(){
-        return simply(() ->
-                turretServos.set(debug == -1? target.get() : debug)
-        );
+    private Action servoUpdate() {
+        return simply(() -> {
+            Supplier<Double> _target = () -> overrideTarget == -1 ? angleToServo(target.get()) : overrideTarget;
+            turretServos.set(debug == -1 ? _target.get() : debug);
+        });
     }
+
+    private double angleToServo(double angle) {
+        return (angle - minDeg) /
+                (maxDeg - minDeg);
+    }
+
     public double getTurretAngle() {
         return turretServos.get();
     }

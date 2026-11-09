@@ -14,7 +14,7 @@ public class FataRobot {
            IntakeSubsystem.intake(),
             DriveSubsystem.drive(),
             YuriSubsystem.yuri(),
-            TurretSubsystem.turret().disable(),
+            TurretSubsystem.turret(),
             FlowerSubsystem.flower()
     };
 

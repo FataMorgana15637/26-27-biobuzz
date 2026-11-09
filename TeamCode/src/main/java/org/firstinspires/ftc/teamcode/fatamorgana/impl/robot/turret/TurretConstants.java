@@ -7,4 +7,8 @@ import com.pedropathing.math.Pose;
 public class TurretConstants {
     public static Pose testPose = new Pose(72,0,0);
     public static double debug = -1.0;
+
+    public static double maxDeg = 337.5;
+    public static double minDeg = 22.5;
+    public static double overrideTarget = -1;
 }

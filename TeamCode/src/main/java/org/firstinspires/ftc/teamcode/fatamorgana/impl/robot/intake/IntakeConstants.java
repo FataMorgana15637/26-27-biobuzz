@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class IntakeConstants {
     public static double intakeSpeed = 1.0;
     public static double transferSpeed = intakeSpeed;
+    public static double transferIntakeSpeed = 0.6;
     public static double outtakeSpeed = -1.0;
     public static double transferOuttakeSpeed = outtakeSpeed;
     public static double stopSpeed = 0.0;

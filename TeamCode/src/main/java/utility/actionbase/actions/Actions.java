@@ -7,7 +7,6 @@ import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 public class Actions {
-
     public static Action lazy(Supplier<Action> action){
         return new LazyAction(action);
     }

@@ -14,7 +14,7 @@ public class SeparateTransferAction extends SequentialActionRunner {
         super(
                 setStopper(FLOW),
 
-                transfer(),
+                transfer().after(50),
 
                 intake().empty(),
 

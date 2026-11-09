@@ -77,6 +77,10 @@ public class TalaOp extends FataOpMode {
 
         button(() -> gamepad1.cross).whenPressed(() ->
                 flower().setTarget(FlowerPose.UP)).create();
+
+        button(() -> gamepad1.share).whenPressed(() ->
+                drive().resetHeading(Math.toRadians(90))
+        ).create();
     }
 
     @Override

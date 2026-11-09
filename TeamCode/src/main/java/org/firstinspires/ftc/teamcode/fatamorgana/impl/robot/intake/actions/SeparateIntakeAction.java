@@ -20,7 +20,7 @@ public class SeparateIntakeAction extends SequentialActionRunner {
                         () -> intake().isFull(),
 
                         () -> setIntake(intakeSpeed)
-                                .also(setTransfer(stopSpeed))
+                                .also(setTransfer(transferIntakeSpeed))
                 ),
 
                 setIntake(stopSpeed)

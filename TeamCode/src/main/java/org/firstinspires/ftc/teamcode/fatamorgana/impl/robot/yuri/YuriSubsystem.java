@@ -37,13 +37,16 @@ public class YuriSubsystem extends Subsystem {
     private StopperPose stopperPose = STOP;
     private YuriState yuriState = SEPARATE;
     private boolean shoot = true;
+    private double kv = 0.0;
     private final InterpLUT distanceToMotorLUT = new InterpLUT();
     private final InterpLUT motorLUT = new InterpLUT();
     private final InterpLUT hoodLUT = new InterpLUT();
+
+    private final InterpLUT kvLUT = new InterpLUT();
     private final FeedForwardController feedForwardController = new FeedForwardController(
             () -> kS,
-            () -> kV,
-            () -> kA
+            () -> kvLUT.get(Range.clip(yuriMotors.getVelocity(), 1000.01, 2699.9))      ,
+            () -> p
     );
 
     private final PFController pidUp = new PFController(
@@ -78,34 +81,28 @@ public class YuriSubsystem extends Subsystem {
         distanceToMotorLUT.add(250 * cmToInches, 657);
         distanceToMotorLUT.add(300 * cmToInches, 780);
 
-        motorLUT.add(0, 0);
-        motorLUT.add(0, 0);
-        motorLUT.add(0, 0);
-        motorLUT.add(0, 0);
-        motorLUT.add(0, 0);
-
-        hoodLUT.add(0, 0);
-        hoodLUT.add(0, 0);
-        hoodLUT.add(0, 0);
-        hoodLUT.add(0, 0);
-        hoodLUT.add(0, 0);
+        kvLUT.add(1000, 0.0043);
+        kvLUT.add(2000, 0.0043);
+        kvLUT.add(2340, 0.0044);
+        kvLUT.add(2700, 0.0044);
 
         distanceToMotorLUT.createLUT();
+        kvLUT.createLUT();
     }
 
     @Override
     public void hardwareInit() {
         yuriMotorOne = getDcMotorEx("yuri");
-        yuriMotorTwo = getDcMotorEx("yuriTwo");
-        yuriMotors = getMotorGroup(yuriMotorOne, yuriMotorTwo);
-        hood = getServo("hood");
+//        yuriMotorTwo = getDcMotorEx("yuriTwo");
+        yuriMotors = getMotorGroup(yuriMotorOne/*, yuriMotorTwo*/);
+//        hood = getServo("hood");
         stopper = getServo("stopper");
         yuriMotorOne.setInverted(false);
-        yuriMotorTwo.setInverted(true);
+//        yuriMotorTwo.setInverted(true);
         yuriMotorOne.setRunMode(Motor.RunMode.RawPower);
         yuriMotorOne.stopAndResetEncoder();
         stopper.setInverted(true);
-        hood.setInverted(false);
+//        hood.setInverted(false);
     }
 
     @Override
@@ -121,7 +118,7 @@ public class YuriSubsystem extends Subsystem {
     @Override
     public void loop() {
 //        scoreCalc().schedule();
-        hoodUpdate().schedule();
+//        hoodUpdate().schedule();
         stopperUpdate().schedule();
         motorUpdate().schedule();
         telemetryUpdate().schedule();
@@ -259,6 +256,7 @@ public class YuriSubsystem extends Subsystem {
 //    }
     private Action feedForward(Supplier<Double> yuriTarget) {
         return simply(() -> {
+            feedForwardController.setCurrentVelocity(() -> getYuriVelocity());
             double voltage = feedForwardController.update(yuriTarget);
             double batteryVoltage = FataMain.getCurrentOpMode()
                     .hardwareMap.voltageSensor.iterator().next().getVoltage();
@@ -337,9 +335,9 @@ public class YuriSubsystem extends Subsystem {
     }
 
     private Action motorUpdate() {
-        yuriTarget = overrideTarget == -1 ? yuriTarget : () -> overrideTarget;
+        Supplier<Double> target = overrideTarget == -1 ? yuriTarget : () -> overrideTarget;
         return power == 0 ?
-                /*feedForward(yuriTarget)*/ pf(yuriTarget) :
+                feedForward(target) /*pf(yuriTarget)*/ :
                 simply(() -> yuriMotors.set(power));
     }
 
@@ -352,7 +350,7 @@ public class YuriSubsystem extends Subsystem {
             FataMain.getTelemetry().addData("target", yuriTarget.get());
             FataMain.getTelemetry().addData("currentVelocity", getYuriVelocity());
             FataMain.getTelemetry().addData("stopper", stopper.get());
-            FataMain.getTelemetry().addData("hood", hood.get());
+//            FataMain.getTelemetry().addData("hood", hood.get());
             FataMain.getTelemetry().addData("ballVelocity", calcScoreBallVelocity());
             FataMain.getTelemetry().addData("yuriVElocity", ballToYuriVelocity(calcScoreBallVelocity()));
             FataMain.getTelemetry().addData("targetDist", getTargetDist());

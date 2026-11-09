@@ -4,38 +4,40 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 @Configurable
+@TeleOp
 public class ThisIsTheLastTunerISwear extends LinearOpMode {
-    public double manualPower = 0.3;
+    public static double manualPower = 0.0;
     public boolean closedLoop = false;
     public static double targetVelocity = 0;
-    public double kS = 0.0;
-    public double kV = 0.000;
-    public double kP = 0.000;
+    public static double kS = 0.0;
+    public static double kV = 0.000;
+    public static double kP = 0.000;
     public double maxPower = 1;
     public double referenceVoltage = 12.0;
     private MotorEx motor;
-    private MotorEx motorTwo;
+//    private MotorEx motorTwo;
     private VoltageSensor voltageSensor;
 
     public void runOpMode() {
 
         TelemetryManager Ptelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
-        motor = hardwareMap.get(MotorEx.class, "yuri");
-        motorTwo = hardwareMap.get(MotorEx.class, "yuriTwo");
+        motor = new MotorEx(hardwareMap, "yuri", Motor.GoBILDA.BARE);
+//        motorTwo = hardwareMap.get(MotorEx.class, "yuriTwo");
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         motor.setRunMode(MotorEx.RunMode.RawPower);
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
 
-        motorTwo.setRunMode(MotorEx.RunMode.RawPower);
-        motorTwo.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
+//        motorTwo.setRunMode(MotorEx.RunMode.RawPower);
+//        motorTwo.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
 
         // Capture battery voltage as initial reference.
         referenceVoltage = voltageSensor.getVoltage();
@@ -47,6 +49,7 @@ public class ThisIsTheLastTunerISwear extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            closedLoop = manualPower == 0;
 
             double batteryVoltage = voltageSensor.getVoltage();
             double currentVelocity = motor.getVelocity();
@@ -82,7 +85,7 @@ public class ThisIsTheLastTunerISwear extends LinearOpMode {
             );
 
             motor.set(appliedPower);
-            motorTwo.set(appliedPower);
+//            motorTwo.set(appliedPower);
 
             // ======================================
             // Voltage calculations
@@ -158,6 +161,6 @@ public class ThisIsTheLastTunerISwear extends LinearOpMode {
         }
 
         motor.set(0);
-        motorTwo.set(0);
+//        motorTwo.set(0);
     }
 }

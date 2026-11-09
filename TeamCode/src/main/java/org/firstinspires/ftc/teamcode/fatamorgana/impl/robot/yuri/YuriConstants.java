@@ -5,17 +5,15 @@ import com.bylazar.configurables.annotations.Configurable;
 @Configurable
 public class YuriConstants {
     //pf
-    public static double f = 0.00068;
-    public static double p = 0.01;
+    public static double f = 0.00038;
+    public static double p = 0.0013;
     public static double bigPF = 0.01;
     public static double bigFF = 0.008;
     public static double bigFR = 0.00006;
     public static double bigPR  = 0.00006;
-    public static double pidSwitch = 100;
+    public static double pidSwitch = 1000000;
     //ks,kv,ka
-    public static double kS = 2.3429;
-    public static double kV = -0.005828;
-    public static double kA = -0.004480;
+    public static double kS = 1.137;
     public static double overrideTarget = -1;
     public static double maxBangConstants = 1;
     public static double cmToInches = 0.393701;
